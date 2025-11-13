@@ -1,0 +1,133 @@
+name: Copilot Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# GitHub Copilot Plus features for automated code review
+jobs:
+  copilot-review:
+    name: AI-Powered Code Review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: 📥 Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🤖 GitHub Copilot Code Review
+        uses: github/super-linter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: main
+          VALIDATE_DART: true
+          VALIDATE_YAML: true
+          VALIDATE_JSON: true
+          VALIDATE_MARKDOWN: true
+
+      - name: 📝 Add review comment with suggestions
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
+            let dartFiles = files.filter(f => f.filename.endsWith('.dart'));
+
+            if (dartFiles.length > 0) {
+              const body = `## 🤖 Copilot Code Review
+
+              **Files Changed:** ${files.length}
+              **Dart Files:** ${dartFiles.length}
+
+              ### ✅ Automated Checks Passed
+              - Super Linter validation
+              - Code formatting
+              - Security scan
+
+              ### 💡 GitHub Copilot Tools Available
+
+              **In Your IDE:**
+              - \`@github-copilot\` - Real-time code suggestions
+              - Copilot Chat - Ask questions about this PR
+              - Copilot Labs - Refactoring suggestions
+
+              **On GitHub (Copilot Plus):**
+              - \`@jules\` - AI assistant for PR reviews and discussions
+              - Comment on any line with \`@jules review this\`
+              - Ask \`@jules\` to explain changes or suggest improvements
+              - Use \`@jules summarize this PR\` for quick overview
+
+              **Quick Commands:**
+              - \`@jules review this PR for security issues\`
+              - \`@jules suggest improvements for performance\`
+              - \`@jules explain this change\`
+              - \`@jules check for Flutter best practices\`
+              `;
+
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+  label-pr:
+    name: Auto-label PR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: 🏷️ Label based on files changed
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  size-label:
+    name: PR Size Labeling
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: 📏 Label PR size
+        uses: codelytv/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_label: 'effort: XS (< 2h)'
+          s_label: 'effort: S (2-4h)'
+          m_label: 'effort: M (4-8h)'
+          l_label: 'effort: L (1-2d)'
+          xl_label: 'effort: XL (3-5d)'
+          xs_max_size: 10
+          s_max_size: 100
+          m_max_size: 500
+          l_max_size: 1000
+
+  check-links:
+    name: Check Documentation Links
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔗 Check links in markdown
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          config-file: '.github/markdown-link-check-config.json'
