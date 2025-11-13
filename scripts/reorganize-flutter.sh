@@ -202,13 +202,16 @@ reorganize_feature() {
     fi
 
     # Create barrel export
-    cat > "lib/features/$feature/$feature.dart" <<EOF
-// Feature: $feature
+    cat > "lib/features/$feature/$feature.dart" <<'BARREL_EOF'
+// Feature: FEATURE_NAME
 // Barrel export file
 
 // Presentation
-export 'presentation/screens/library_screen.dart' show ${feature^}Screen;
-EOF
+export 'presentation/screens/FEATURE_NAME_screen.dart';
+BARREL_EOF
+
+    # Replace placeholders
+    sed -i '' "s/FEATURE_NAME/$feature/g" "lib/features/$feature/$feature.dart"
 
     if [ -d "lib/features/$feature/presentation/widgets" ]; then
         for widget in lib/features/$feature/presentation/widgets/*.dart; do
