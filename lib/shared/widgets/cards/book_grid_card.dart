@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:books_flutter/core/data/database/database.dart';';
+import 'package:books_flutter/core/data/database/database.dart';
 
 /// A compact grid card widget for displaying books in grid view
 class BookGridCard extends StatelessWidget {

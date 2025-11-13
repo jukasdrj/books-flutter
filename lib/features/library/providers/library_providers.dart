@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:books_flutter/core/data/database/database.dart';';
+import 'package:books_flutter/core/data/database/database.dart';
 import '../../../core/providers/database_provider.dart';
 
 part 'library_providers.g.dart';

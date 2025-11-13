@@ -4,7 +4,7 @@ import 'package:books_flutter/features/library/presentation/screens/library_scre
 import 'package:books_flutter/features/search/presentation/screens/search_screen.dart';
 import 'package:books_flutter/features/scanner/presentation/screens/scanner_screen.dart';
 import 'package:books_flutter/features/insights/presentation/screens/insights_screen.dart';
-import 'package:books_flutter/shared/widgets/layouts/main_scaffold.dart';';
+import 'package:books_flutter/shared/widgets/layouts/main_scaffold.dart';
 
 /// App-wide routing configuration using go_router
 /// Uses StatefulShellRoute for persistent tab navigation state

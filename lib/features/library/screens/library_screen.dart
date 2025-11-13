@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:books_flutter/core/data/database/database.dart';';
-import 'package:books_flutter/shared/widgets/cards/book_card.dart';';
-import 'package:books_flutter/shared/widgets/cards/book_grid_card.dart';';
+import 'package:books_flutter/core/data/database/database.dart';
+import 'package:books_flutter/shared/widgets/cards/book_card.dart';
+import 'package:books_flutter/shared/widgets/cards/book_grid_card.dart';
 import '../providers/library_providers.dart';
 
 /// Library Screen - Main screen showing user's book collection
