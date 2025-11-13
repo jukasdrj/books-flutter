@@ -1,0 +1,35 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install dependencies",
+			"type": "shell",
+			"command": "flutter pub get"
+		},
+		{
+			"label": "Generate code",
+			"type": "shell",
+			"command": "flutter pub run build_runner build"
+		},
+		{
+			"label": "Run tests",
+			"type": "shell",
+			"command": "flutter test"
+		},
+		{
+			"label": "Check outdated dependencies",
+			"type": "shell",
+			"command": "flutter pub outdated"
+		},
+		{
+			"label": "Update dependencies",
+			"type": "shell",
+			"command": "flutter pub get"
+		},
+		{
+			"label": "Stage changes",
+			"type": "shell",
+			"command": "git add ."
+		}
+	]
+}
