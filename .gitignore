@@ -60,6 +60,15 @@ lib/firebase_options.dart
 .firebase/
 firebase-debug.log
 firestore-debug.log
+firebase.json
+.firebaserc
+
+# Firebase configuration files (contain API keys)
+**/android/app/google-services.json
+**/ios/Runner/GoogleService-Info.plist
+**/macos/Runner/GoogleService-Info.plist
+**/ios/firebase_app_id_file.json
+**/macos/firebase_app_id_file.json
 
 # Environment files
 .env
