@@ -6,9 +6,9 @@ class ApiClient {
   static Dio create() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: 'https://api.example.com', // TODO: Replace with actual API URL
+        baseUrl: 'https://api.oooefam.net',  // Production BooksTrack API
         connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 60),  // Allow for AI processing (25-40s)
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
