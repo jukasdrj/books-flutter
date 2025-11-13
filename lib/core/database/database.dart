@@ -198,13 +198,66 @@ class UserLibraryEntries extends Table {
   ];
 }
 
+/// ScanSessions table - Tracks individual bookshelf scan sessions
+class ScanSessions extends Table {
+  TextColumn get id => text()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  IntColumn get totalDetected => integer().withDefault(const Constant(0))();
+  IntColumn get reviewedCount => integer().withDefault(const Constant(0))();
+  IntColumn get acceptedCount => integer().withDefault(const Constant(0))();
+  IntColumn get rejectedCount => integer().withDefault(const Constant(0))();
+  TextColumn get status => text().withDefault(const Constant('in_progress'))(); // in_progress, completed
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// DetectedItems table - Individual book detections from AI scanner
+class DetectedItems extends Table {
+  TextColumn get id => text()();
+  TextColumn get sessionId => text().references(ScanSessions, #id, onDelete: KeyAction.cascade)();
+  TextColumn get workId => text().references(Works, #id, onDelete: KeyAction.setNull).nullable()();
+
+  // AI detection results
+  TextColumn get titleGuess => text()();
+  TextColumn get authorGuess => text()();
+  RealColumn get confidence => real()();  // 0.0-1.0
+
+  // Image data
+  TextColumn get imagePath => text().nullable()();
+  TextColumn get boundingBox => text().nullable()(); // JSON: {x, y, width, height}
+
+  // Review status
+  IntColumn get reviewStatus => intEnum<ReviewStatus>().withDefault(const Constant(0))(); // needsReview, verified, rejected
+  DateTimeColumn get reviewedAt => dateTime().nullable()();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+
+  @override
+  List<Index> get indexes => [
+    Index('idx_detected_session_status', [sessionId, reviewStatus]),
+    Index('idx_detected_confidence', [confidence]),
+  ];
+}
+
 /// Main database class
-@DriftDatabase(tables: [Works, Editions, Authors, WorkAuthors, UserLibraryEntries])
+@DriftDatabase(tables: [
+  Works,
+  Editions,
+  Authors,
+  WorkAuthors,
+  UserLibraryEntries,
+  ScanSessions,
+  DetectedItems,
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;  // Added indexes for keyset pagination
+  int get schemaVersion => 4;  // Added ScanSessions and DetectedItems tables
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'books_tracker_db');

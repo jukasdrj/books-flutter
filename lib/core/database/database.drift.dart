@@ -2742,6 +2742,991 @@ class UserLibraryEntriesCompanion extends UpdateCompanion<UserLibraryEntry> {
   }
 }
 
+class $ScanSessionsTable extends ScanSessions
+    with TableInfo<$ScanSessionsTable, ScanSession> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ScanSessionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _totalDetectedMeta =
+      const VerificationMeta('totalDetected');
+  @override
+  late final GeneratedColumn<int> totalDetected = GeneratedColumn<int>(
+      'total_detected', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _reviewedCountMeta =
+      const VerificationMeta('reviewedCount');
+  @override
+  late final GeneratedColumn<int> reviewedCount = GeneratedColumn<int>(
+      'reviewed_count', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _acceptedCountMeta =
+      const VerificationMeta('acceptedCount');
+  @override
+  late final GeneratedColumn<int> acceptedCount = GeneratedColumn<int>(
+      'accepted_count', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _rejectedCountMeta =
+      const VerificationMeta('rejectedCount');
+  @override
+  late final GeneratedColumn<int> rejectedCount = GeneratedColumn<int>(
+      'rejected_count', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('in_progress'));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        createdAt,
+        totalDetected,
+        reviewedCount,
+        acceptedCount,
+        rejectedCount,
+        status
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'scan_sessions';
+  @override
+  VerificationContext validateIntegrity(Insertable<ScanSession> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('total_detected')) {
+      context.handle(
+          _totalDetectedMeta,
+          totalDetected.isAcceptableOrUnknown(
+              data['total_detected']!, _totalDetectedMeta));
+    }
+    if (data.containsKey('reviewed_count')) {
+      context.handle(
+          _reviewedCountMeta,
+          reviewedCount.isAcceptableOrUnknown(
+              data['reviewed_count']!, _reviewedCountMeta));
+    }
+    if (data.containsKey('accepted_count')) {
+      context.handle(
+          _acceptedCountMeta,
+          acceptedCount.isAcceptableOrUnknown(
+              data['accepted_count']!, _acceptedCountMeta));
+    }
+    if (data.containsKey('rejected_count')) {
+      context.handle(
+          _rejectedCountMeta,
+          rejectedCount.isAcceptableOrUnknown(
+              data['rejected_count']!, _rejectedCountMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ScanSession map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ScanSession(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      totalDetected: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}total_detected'])!,
+      reviewedCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}reviewed_count'])!,
+      acceptedCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}accepted_count'])!,
+      rejectedCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}rejected_count'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+    );
+  }
+
+  @override
+  $ScanSessionsTable createAlias(String alias) {
+    return $ScanSessionsTable(attachedDatabase, alias);
+  }
+}
+
+class ScanSession extends DataClass implements Insertable<ScanSession> {
+  final String id;
+  final DateTime createdAt;
+  final int totalDetected;
+  final int reviewedCount;
+  final int acceptedCount;
+  final int rejectedCount;
+  final String status;
+  const ScanSession(
+      {required this.id,
+      required this.createdAt,
+      required this.totalDetected,
+      required this.reviewedCount,
+      required this.acceptedCount,
+      required this.rejectedCount,
+      required this.status});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['total_detected'] = Variable<int>(totalDetected);
+    map['reviewed_count'] = Variable<int>(reviewedCount);
+    map['accepted_count'] = Variable<int>(acceptedCount);
+    map['rejected_count'] = Variable<int>(rejectedCount);
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  ScanSessionsCompanion toCompanion(bool nullToAbsent) {
+    return ScanSessionsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      totalDetected: Value(totalDetected),
+      reviewedCount: Value(reviewedCount),
+      acceptedCount: Value(acceptedCount),
+      rejectedCount: Value(rejectedCount),
+      status: Value(status),
+    );
+  }
+
+  factory ScanSession.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ScanSession(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      totalDetected: serializer.fromJson<int>(json['totalDetected']),
+      reviewedCount: serializer.fromJson<int>(json['reviewedCount']),
+      acceptedCount: serializer.fromJson<int>(json['acceptedCount']),
+      rejectedCount: serializer.fromJson<int>(json['rejectedCount']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'totalDetected': serializer.toJson<int>(totalDetected),
+      'reviewedCount': serializer.toJson<int>(reviewedCount),
+      'acceptedCount': serializer.toJson<int>(acceptedCount),
+      'rejectedCount': serializer.toJson<int>(rejectedCount),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  ScanSession copyWith(
+          {String? id,
+          DateTime? createdAt,
+          int? totalDetected,
+          int? reviewedCount,
+          int? acceptedCount,
+          int? rejectedCount,
+          String? status}) =>
+      ScanSession(
+        id: id ?? this.id,
+        createdAt: createdAt ?? this.createdAt,
+        totalDetected: totalDetected ?? this.totalDetected,
+        reviewedCount: reviewedCount ?? this.reviewedCount,
+        acceptedCount: acceptedCount ?? this.acceptedCount,
+        rejectedCount: rejectedCount ?? this.rejectedCount,
+        status: status ?? this.status,
+      );
+  ScanSession copyWithCompanion(ScanSessionsCompanion data) {
+    return ScanSession(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      totalDetected: data.totalDetected.present
+          ? data.totalDetected.value
+          : this.totalDetected,
+      reviewedCount: data.reviewedCount.present
+          ? data.reviewedCount.value
+          : this.reviewedCount,
+      acceptedCount: data.acceptedCount.present
+          ? data.acceptedCount.value
+          : this.acceptedCount,
+      rejectedCount: data.rejectedCount.present
+          ? data.rejectedCount.value
+          : this.rejectedCount,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ScanSession(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('totalDetected: $totalDetected, ')
+          ..write('reviewedCount: $reviewedCount, ')
+          ..write('acceptedCount: $acceptedCount, ')
+          ..write('rejectedCount: $rejectedCount, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, createdAt, totalDetected, reviewedCount,
+      acceptedCount, rejectedCount, status);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ScanSession &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.totalDetected == this.totalDetected &&
+          other.reviewedCount == this.reviewedCount &&
+          other.acceptedCount == this.acceptedCount &&
+          other.rejectedCount == this.rejectedCount &&
+          other.status == this.status);
+}
+
+class ScanSessionsCompanion extends UpdateCompanion<ScanSession> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<int> totalDetected;
+  final Value<int> reviewedCount;
+  final Value<int> acceptedCount;
+  final Value<int> rejectedCount;
+  final Value<String> status;
+  final Value<int> rowid;
+  const ScanSessionsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.totalDetected = const Value.absent(),
+    this.reviewedCount = const Value.absent(),
+    this.acceptedCount = const Value.absent(),
+    this.rejectedCount = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ScanSessionsCompanion.insert({
+    required String id,
+    this.createdAt = const Value.absent(),
+    this.totalDetected = const Value.absent(),
+    this.reviewedCount = const Value.absent(),
+    this.acceptedCount = const Value.absent(),
+    this.rejectedCount = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
+  static Insertable<ScanSession> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<int>? totalDetected,
+    Expression<int>? reviewedCount,
+    Expression<int>? acceptedCount,
+    Expression<int>? rejectedCount,
+    Expression<String>? status,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (totalDetected != null) 'total_detected': totalDetected,
+      if (reviewedCount != null) 'reviewed_count': reviewedCount,
+      if (acceptedCount != null) 'accepted_count': acceptedCount,
+      if (rejectedCount != null) 'rejected_count': rejectedCount,
+      if (status != null) 'status': status,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ScanSessionsCompanion copyWith(
+      {Value<String>? id,
+      Value<DateTime>? createdAt,
+      Value<int>? totalDetected,
+      Value<int>? reviewedCount,
+      Value<int>? acceptedCount,
+      Value<int>? rejectedCount,
+      Value<String>? status,
+      Value<int>? rowid}) {
+    return ScanSessionsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      totalDetected: totalDetected ?? this.totalDetected,
+      reviewedCount: reviewedCount ?? this.reviewedCount,
+      acceptedCount: acceptedCount ?? this.acceptedCount,
+      rejectedCount: rejectedCount ?? this.rejectedCount,
+      status: status ?? this.status,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (totalDetected.present) {
+      map['total_detected'] = Variable<int>(totalDetected.value);
+    }
+    if (reviewedCount.present) {
+      map['reviewed_count'] = Variable<int>(reviewedCount.value);
+    }
+    if (acceptedCount.present) {
+      map['accepted_count'] = Variable<int>(acceptedCount.value);
+    }
+    if (rejectedCount.present) {
+      map['rejected_count'] = Variable<int>(rejectedCount.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ScanSessionsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('totalDetected: $totalDetected, ')
+          ..write('reviewedCount: $reviewedCount, ')
+          ..write('acceptedCount: $acceptedCount, ')
+          ..write('rejectedCount: $rejectedCount, ')
+          ..write('status: $status, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DetectedItemsTable extends DetectedItems
+    with TableInfo<$DetectedItemsTable, DetectedItem> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DetectedItemsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _sessionIdMeta =
+      const VerificationMeta('sessionId');
+  @override
+  late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
+      'session_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES scan_sessions (id) ON DELETE CASCADE'));
+  static const VerificationMeta _workIdMeta = const VerificationMeta('workId');
+  @override
+  late final GeneratedColumn<String> workId = GeneratedColumn<String>(
+      'work_id', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES works (id) ON DELETE SET NULL'));
+  static const VerificationMeta _titleGuessMeta =
+      const VerificationMeta('titleGuess');
+  @override
+  late final GeneratedColumn<String> titleGuess = GeneratedColumn<String>(
+      'title_guess', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _authorGuessMeta =
+      const VerificationMeta('authorGuess');
+  @override
+  late final GeneratedColumn<String> authorGuess = GeneratedColumn<String>(
+      'author_guess', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _confidenceMeta =
+      const VerificationMeta('confidence');
+  @override
+  late final GeneratedColumn<double> confidence = GeneratedColumn<double>(
+      'confidence', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _imagePathMeta =
+      const VerificationMeta('imagePath');
+  @override
+  late final GeneratedColumn<String> imagePath = GeneratedColumn<String>(
+      'image_path', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _boundingBoxMeta =
+      const VerificationMeta('boundingBox');
+  @override
+  late final GeneratedColumn<String> boundingBox = GeneratedColumn<String>(
+      'bounding_box', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _reviewStatusMeta =
+      const VerificationMeta('reviewStatus');
+  @override
+  late final GeneratedColumnWithTypeConverter<ReviewStatus, int> reviewStatus =
+      GeneratedColumn<int>('review_status', aliasedName, false,
+              type: DriftSqlType.int,
+              requiredDuringInsert: false,
+              defaultValue: const Constant(0))
+          .withConverter<ReviewStatus>(
+              $DetectedItemsTable.$converterreviewStatus);
+  static const VerificationMeta _reviewedAtMeta =
+      const VerificationMeta('reviewedAt');
+  @override
+  late final GeneratedColumn<DateTime> reviewedAt = GeneratedColumn<DateTime>(
+      'reviewed_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        sessionId,
+        workId,
+        titleGuess,
+        authorGuess,
+        confidence,
+        imagePath,
+        boundingBox,
+        reviewStatus,
+        reviewedAt,
+        createdAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'detected_items';
+  @override
+  VerificationContext validateIntegrity(Insertable<DetectedItem> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('session_id')) {
+      context.handle(_sessionIdMeta,
+          sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta));
+    } else if (isInserting) {
+      context.missing(_sessionIdMeta);
+    }
+    if (data.containsKey('work_id')) {
+      context.handle(_workIdMeta,
+          workId.isAcceptableOrUnknown(data['work_id']!, _workIdMeta));
+    }
+    if (data.containsKey('title_guess')) {
+      context.handle(
+          _titleGuessMeta,
+          titleGuess.isAcceptableOrUnknown(
+              data['title_guess']!, _titleGuessMeta));
+    } else if (isInserting) {
+      context.missing(_titleGuessMeta);
+    }
+    if (data.containsKey('author_guess')) {
+      context.handle(
+          _authorGuessMeta,
+          authorGuess.isAcceptableOrUnknown(
+              data['author_guess']!, _authorGuessMeta));
+    } else if (isInserting) {
+      context.missing(_authorGuessMeta);
+    }
+    if (data.containsKey('confidence')) {
+      context.handle(
+          _confidenceMeta,
+          confidence.isAcceptableOrUnknown(
+              data['confidence']!, _confidenceMeta));
+    } else if (isInserting) {
+      context.missing(_confidenceMeta);
+    }
+    if (data.containsKey('image_path')) {
+      context.handle(_imagePathMeta,
+          imagePath.isAcceptableOrUnknown(data['image_path']!, _imagePathMeta));
+    }
+    if (data.containsKey('bounding_box')) {
+      context.handle(
+          _boundingBoxMeta,
+          boundingBox.isAcceptableOrUnknown(
+              data['bounding_box']!, _boundingBoxMeta));
+    }
+    context.handle(_reviewStatusMeta, const VerificationResult.success());
+    if (data.containsKey('reviewed_at')) {
+      context.handle(
+          _reviewedAtMeta,
+          reviewedAt.isAcceptableOrUnknown(
+              data['reviewed_at']!, _reviewedAtMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DetectedItem map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DetectedItem(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      sessionId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}session_id'])!,
+      workId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}work_id']),
+      titleGuess: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title_guess'])!,
+      authorGuess: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}author_guess'])!,
+      confidence: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}confidence'])!,
+      imagePath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image_path']),
+      boundingBox: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bounding_box']),
+      reviewStatus: $DetectedItemsTable.$converterreviewStatus.fromSql(
+          attachedDatabase.typeMapping.read(
+              DriftSqlType.int, data['${effectivePrefix}review_status'])!),
+      reviewedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}reviewed_at']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $DetectedItemsTable createAlias(String alias) {
+    return $DetectedItemsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<ReviewStatus, int, int> $converterreviewStatus =
+      const EnumIndexConverter<ReviewStatus>(ReviewStatus.values);
+}
+
+class DetectedItem extends DataClass implements Insertable<DetectedItem> {
+  final String id;
+  final String sessionId;
+  final String? workId;
+  final String titleGuess;
+  final String authorGuess;
+  final double confidence;
+  final String? imagePath;
+  final String? boundingBox;
+  final ReviewStatus reviewStatus;
+  final DateTime? reviewedAt;
+  final DateTime createdAt;
+  const DetectedItem(
+      {required this.id,
+      required this.sessionId,
+      this.workId,
+      required this.titleGuess,
+      required this.authorGuess,
+      required this.confidence,
+      this.imagePath,
+      this.boundingBox,
+      required this.reviewStatus,
+      this.reviewedAt,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['session_id'] = Variable<String>(sessionId);
+    if (!nullToAbsent || workId != null) {
+      map['work_id'] = Variable<String>(workId);
+    }
+    map['title_guess'] = Variable<String>(titleGuess);
+    map['author_guess'] = Variable<String>(authorGuess);
+    map['confidence'] = Variable<double>(confidence);
+    if (!nullToAbsent || imagePath != null) {
+      map['image_path'] = Variable<String>(imagePath);
+    }
+    if (!nullToAbsent || boundingBox != null) {
+      map['bounding_box'] = Variable<String>(boundingBox);
+    }
+    {
+      map['review_status'] = Variable<int>(
+          $DetectedItemsTable.$converterreviewStatus.toSql(reviewStatus));
+    }
+    if (!nullToAbsent || reviewedAt != null) {
+      map['reviewed_at'] = Variable<DateTime>(reviewedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  DetectedItemsCompanion toCompanion(bool nullToAbsent) {
+    return DetectedItemsCompanion(
+      id: Value(id),
+      sessionId: Value(sessionId),
+      workId:
+          workId == null && nullToAbsent ? const Value.absent() : Value(workId),
+      titleGuess: Value(titleGuess),
+      authorGuess: Value(authorGuess),
+      confidence: Value(confidence),
+      imagePath: imagePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imagePath),
+      boundingBox: boundingBox == null && nullToAbsent
+          ? const Value.absent()
+          : Value(boundingBox),
+      reviewStatus: Value(reviewStatus),
+      reviewedAt: reviewedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reviewedAt),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory DetectedItem.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DetectedItem(
+      id: serializer.fromJson<String>(json['id']),
+      sessionId: serializer.fromJson<String>(json['sessionId']),
+      workId: serializer.fromJson<String?>(json['workId']),
+      titleGuess: serializer.fromJson<String>(json['titleGuess']),
+      authorGuess: serializer.fromJson<String>(json['authorGuess']),
+      confidence: serializer.fromJson<double>(json['confidence']),
+      imagePath: serializer.fromJson<String?>(json['imagePath']),
+      boundingBox: serializer.fromJson<String?>(json['boundingBox']),
+      reviewStatus: $DetectedItemsTable.$converterreviewStatus
+          .fromJson(serializer.fromJson<int>(json['reviewStatus'])),
+      reviewedAt: serializer.fromJson<DateTime?>(json['reviewedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'sessionId': serializer.toJson<String>(sessionId),
+      'workId': serializer.toJson<String?>(workId),
+      'titleGuess': serializer.toJson<String>(titleGuess),
+      'authorGuess': serializer.toJson<String>(authorGuess),
+      'confidence': serializer.toJson<double>(confidence),
+      'imagePath': serializer.toJson<String?>(imagePath),
+      'boundingBox': serializer.toJson<String?>(boundingBox),
+      'reviewStatus': serializer.toJson<int>(
+          $DetectedItemsTable.$converterreviewStatus.toJson(reviewStatus)),
+      'reviewedAt': serializer.toJson<DateTime?>(reviewedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  DetectedItem copyWith(
+          {String? id,
+          String? sessionId,
+          Value<String?> workId = const Value.absent(),
+          String? titleGuess,
+          String? authorGuess,
+          double? confidence,
+          Value<String?> imagePath = const Value.absent(),
+          Value<String?> boundingBox = const Value.absent(),
+          ReviewStatus? reviewStatus,
+          Value<DateTime?> reviewedAt = const Value.absent(),
+          DateTime? createdAt}) =>
+      DetectedItem(
+        id: id ?? this.id,
+        sessionId: sessionId ?? this.sessionId,
+        workId: workId.present ? workId.value : this.workId,
+        titleGuess: titleGuess ?? this.titleGuess,
+        authorGuess: authorGuess ?? this.authorGuess,
+        confidence: confidence ?? this.confidence,
+        imagePath: imagePath.present ? imagePath.value : this.imagePath,
+        boundingBox: boundingBox.present ? boundingBox.value : this.boundingBox,
+        reviewStatus: reviewStatus ?? this.reviewStatus,
+        reviewedAt: reviewedAt.present ? reviewedAt.value : this.reviewedAt,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  DetectedItem copyWithCompanion(DetectedItemsCompanion data) {
+    return DetectedItem(
+      id: data.id.present ? data.id.value : this.id,
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      workId: data.workId.present ? data.workId.value : this.workId,
+      titleGuess:
+          data.titleGuess.present ? data.titleGuess.value : this.titleGuess,
+      authorGuess:
+          data.authorGuess.present ? data.authorGuess.value : this.authorGuess,
+      confidence:
+          data.confidence.present ? data.confidence.value : this.confidence,
+      imagePath: data.imagePath.present ? data.imagePath.value : this.imagePath,
+      boundingBox:
+          data.boundingBox.present ? data.boundingBox.value : this.boundingBox,
+      reviewStatus: data.reviewStatus.present
+          ? data.reviewStatus.value
+          : this.reviewStatus,
+      reviewedAt:
+          data.reviewedAt.present ? data.reviewedAt.value : this.reviewedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DetectedItem(')
+          ..write('id: $id, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('workId: $workId, ')
+          ..write('titleGuess: $titleGuess, ')
+          ..write('authorGuess: $authorGuess, ')
+          ..write('confidence: $confidence, ')
+          ..write('imagePath: $imagePath, ')
+          ..write('boundingBox: $boundingBox, ')
+          ..write('reviewStatus: $reviewStatus, ')
+          ..write('reviewedAt: $reviewedAt, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      sessionId,
+      workId,
+      titleGuess,
+      authorGuess,
+      confidence,
+      imagePath,
+      boundingBox,
+      reviewStatus,
+      reviewedAt,
+      createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DetectedItem &&
+          other.id == this.id &&
+          other.sessionId == this.sessionId &&
+          other.workId == this.workId &&
+          other.titleGuess == this.titleGuess &&
+          other.authorGuess == this.authorGuess &&
+          other.confidence == this.confidence &&
+          other.imagePath == this.imagePath &&
+          other.boundingBox == this.boundingBox &&
+          other.reviewStatus == this.reviewStatus &&
+          other.reviewedAt == this.reviewedAt &&
+          other.createdAt == this.createdAt);
+}
+
+class DetectedItemsCompanion extends UpdateCompanion<DetectedItem> {
+  final Value<String> id;
+  final Value<String> sessionId;
+  final Value<String?> workId;
+  final Value<String> titleGuess;
+  final Value<String> authorGuess;
+  final Value<double> confidence;
+  final Value<String?> imagePath;
+  final Value<String?> boundingBox;
+  final Value<ReviewStatus> reviewStatus;
+  final Value<DateTime?> reviewedAt;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const DetectedItemsCompanion({
+    this.id = const Value.absent(),
+    this.sessionId = const Value.absent(),
+    this.workId = const Value.absent(),
+    this.titleGuess = const Value.absent(),
+    this.authorGuess = const Value.absent(),
+    this.confidence = const Value.absent(),
+    this.imagePath = const Value.absent(),
+    this.boundingBox = const Value.absent(),
+    this.reviewStatus = const Value.absent(),
+    this.reviewedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DetectedItemsCompanion.insert({
+    required String id,
+    required String sessionId,
+    this.workId = const Value.absent(),
+    required String titleGuess,
+    required String authorGuess,
+    required double confidence,
+    this.imagePath = const Value.absent(),
+    this.boundingBox = const Value.absent(),
+    this.reviewStatus = const Value.absent(),
+    this.reviewedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        sessionId = Value(sessionId),
+        titleGuess = Value(titleGuess),
+        authorGuess = Value(authorGuess),
+        confidence = Value(confidence);
+  static Insertable<DetectedItem> custom({
+    Expression<String>? id,
+    Expression<String>? sessionId,
+    Expression<String>? workId,
+    Expression<String>? titleGuess,
+    Expression<String>? authorGuess,
+    Expression<double>? confidence,
+    Expression<String>? imagePath,
+    Expression<String>? boundingBox,
+    Expression<int>? reviewStatus,
+    Expression<DateTime>? reviewedAt,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (sessionId != null) 'session_id': sessionId,
+      if (workId != null) 'work_id': workId,
+      if (titleGuess != null) 'title_guess': titleGuess,
+      if (authorGuess != null) 'author_guess': authorGuess,
+      if (confidence != null) 'confidence': confidence,
+      if (imagePath != null) 'image_path': imagePath,
+      if (boundingBox != null) 'bounding_box': boundingBox,
+      if (reviewStatus != null) 'review_status': reviewStatus,
+      if (reviewedAt != null) 'reviewed_at': reviewedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DetectedItemsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? sessionId,
+      Value<String?>? workId,
+      Value<String>? titleGuess,
+      Value<String>? authorGuess,
+      Value<double>? confidence,
+      Value<String?>? imagePath,
+      Value<String?>? boundingBox,
+      Value<ReviewStatus>? reviewStatus,
+      Value<DateTime?>? reviewedAt,
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
+    return DetectedItemsCompanion(
+      id: id ?? this.id,
+      sessionId: sessionId ?? this.sessionId,
+      workId: workId ?? this.workId,
+      titleGuess: titleGuess ?? this.titleGuess,
+      authorGuess: authorGuess ?? this.authorGuess,
+      confidence: confidence ?? this.confidence,
+      imagePath: imagePath ?? this.imagePath,
+      boundingBox: boundingBox ?? this.boundingBox,
+      reviewStatus: reviewStatus ?? this.reviewStatus,
+      reviewedAt: reviewedAt ?? this.reviewedAt,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (sessionId.present) {
+      map['session_id'] = Variable<String>(sessionId.value);
+    }
+    if (workId.present) {
+      map['work_id'] = Variable<String>(workId.value);
+    }
+    if (titleGuess.present) {
+      map['title_guess'] = Variable<String>(titleGuess.value);
+    }
+    if (authorGuess.present) {
+      map['author_guess'] = Variable<String>(authorGuess.value);
+    }
+    if (confidence.present) {
+      map['confidence'] = Variable<double>(confidence.value);
+    }
+    if (imagePath.present) {
+      map['image_path'] = Variable<String>(imagePath.value);
+    }
+    if (boundingBox.present) {
+      map['bounding_box'] = Variable<String>(boundingBox.value);
+    }
+    if (reviewStatus.present) {
+      map['review_status'] = Variable<int>(
+          $DetectedItemsTable.$converterreviewStatus.toSql(reviewStatus.value));
+    }
+    if (reviewedAt.present) {
+      map['reviewed_at'] = Variable<DateTime>(reviewedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DetectedItemsCompanion(')
+          ..write('id: $id, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('workId: $workId, ')
+          ..write('titleGuess: $titleGuess, ')
+          ..write('authorGuess: $authorGuess, ')
+          ..write('confidence: $confidence, ')
+          ..write('imagePath: $imagePath, ')
+          ..write('boundingBox: $boundingBox, ')
+          ..write('reviewStatus: $reviewStatus, ')
+          ..write('reviewedAt: $reviewedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2751,12 +3736,21 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $WorkAuthorsTable workAuthors = $WorkAuthorsTable(this);
   late final $UserLibraryEntriesTable userLibraryEntries =
       $UserLibraryEntriesTable(this);
+  late final $ScanSessionsTable scanSessions = $ScanSessionsTable(this);
+  late final $DetectedItemsTable detectedItems = $DetectedItemsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [works, editions, authors, workAuthors, userLibraryEntries];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        works,
+        editions,
+        authors,
+        workAuthors,
+        userLibraryEntries,
+        scanSessions,
+        detectedItems
+      ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
         [
@@ -2793,6 +3787,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
                 limitUpdateKind: UpdateKind.delete),
             result: [
               TableUpdate('user_library_entries', kind: UpdateKind.update),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('scan_sessions',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('detected_items', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('works',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('detected_items', kind: UpdateKind.update),
             ],
           ),
         ],
@@ -3053,6 +4061,19 @@ class $$WorksTableFilterComposer
                     $state.db.userLibraryEntries,
                     joinBuilder,
                     parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter detectedItemsRefs(
+      ComposableFilter Function($$DetectedItemsTableFilterComposer f) f) {
+    final $$DetectedItemsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.detectedItems,
+        getReferencedColumn: (t) => t.workId,
+        builder: (joinBuilder, parentComposers) =>
+            $$DetectedItemsTableFilterComposer(ComposerState($state.db,
+                $state.db.detectedItems, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
@@ -3995,6 +5016,433 @@ class $$UserLibraryEntriesTableOrderingComposer
   }
 }
 
+typedef $$ScanSessionsTableCreateCompanionBuilder = ScanSessionsCompanion
+    Function({
+  required String id,
+  Value<DateTime> createdAt,
+  Value<int> totalDetected,
+  Value<int> reviewedCount,
+  Value<int> acceptedCount,
+  Value<int> rejectedCount,
+  Value<String> status,
+  Value<int> rowid,
+});
+typedef $$ScanSessionsTableUpdateCompanionBuilder = ScanSessionsCompanion
+    Function({
+  Value<String> id,
+  Value<DateTime> createdAt,
+  Value<int> totalDetected,
+  Value<int> reviewedCount,
+  Value<int> acceptedCount,
+  Value<int> rejectedCount,
+  Value<String> status,
+  Value<int> rowid,
+});
+
+class $$ScanSessionsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ScanSessionsTable,
+    ScanSession,
+    $$ScanSessionsTableFilterComposer,
+    $$ScanSessionsTableOrderingComposer,
+    $$ScanSessionsTableCreateCompanionBuilder,
+    $$ScanSessionsTableUpdateCompanionBuilder> {
+  $$ScanSessionsTableTableManager(_$AppDatabase db, $ScanSessionsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ScanSessionsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ScanSessionsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> totalDetected = const Value.absent(),
+            Value<int> reviewedCount = const Value.absent(),
+            Value<int> acceptedCount = const Value.absent(),
+            Value<int> rejectedCount = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ScanSessionsCompanion(
+            id: id,
+            createdAt: createdAt,
+            totalDetected: totalDetected,
+            reviewedCount: reviewedCount,
+            acceptedCount: acceptedCount,
+            rejectedCount: rejectedCount,
+            status: status,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> totalDetected = const Value.absent(),
+            Value<int> reviewedCount = const Value.absent(),
+            Value<int> acceptedCount = const Value.absent(),
+            Value<int> rejectedCount = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ScanSessionsCompanion.insert(
+            id: id,
+            createdAt: createdAt,
+            totalDetected: totalDetected,
+            reviewedCount: reviewedCount,
+            acceptedCount: acceptedCount,
+            rejectedCount: rejectedCount,
+            status: status,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$ScanSessionsTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $ScanSessionsTable> {
+  $$ScanSessionsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get totalDetected => $state.composableBuilder(
+      column: $state.table.totalDetected,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get reviewedCount => $state.composableBuilder(
+      column: $state.table.reviewedCount,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get acceptedCount => $state.composableBuilder(
+      column: $state.table.acceptedCount,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get rejectedCount => $state.composableBuilder(
+      column: $state.table.rejectedCount,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get status => $state.composableBuilder(
+      column: $state.table.status,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter detectedItemsRefs(
+      ComposableFilter Function($$DetectedItemsTableFilterComposer f) f) {
+    final $$DetectedItemsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.detectedItems,
+        getReferencedColumn: (t) => t.sessionId,
+        builder: (joinBuilder, parentComposers) =>
+            $$DetectedItemsTableFilterComposer(ComposerState($state.db,
+                $state.db.detectedItems, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$ScanSessionsTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $ScanSessionsTable> {
+  $$ScanSessionsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get totalDetected => $state.composableBuilder(
+      column: $state.table.totalDetected,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get reviewedCount => $state.composableBuilder(
+      column: $state.table.reviewedCount,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get acceptedCount => $state.composableBuilder(
+      column: $state.table.acceptedCount,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get rejectedCount => $state.composableBuilder(
+      column: $state.table.rejectedCount,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get status => $state.composableBuilder(
+      column: $state.table.status,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$DetectedItemsTableCreateCompanionBuilder = DetectedItemsCompanion
+    Function({
+  required String id,
+  required String sessionId,
+  Value<String?> workId,
+  required String titleGuess,
+  required String authorGuess,
+  required double confidence,
+  Value<String?> imagePath,
+  Value<String?> boundingBox,
+  Value<ReviewStatus> reviewStatus,
+  Value<DateTime?> reviewedAt,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+typedef $$DetectedItemsTableUpdateCompanionBuilder = DetectedItemsCompanion
+    Function({
+  Value<String> id,
+  Value<String> sessionId,
+  Value<String?> workId,
+  Value<String> titleGuess,
+  Value<String> authorGuess,
+  Value<double> confidence,
+  Value<String?> imagePath,
+  Value<String?> boundingBox,
+  Value<ReviewStatus> reviewStatus,
+  Value<DateTime?> reviewedAt,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+
+class $$DetectedItemsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $DetectedItemsTable,
+    DetectedItem,
+    $$DetectedItemsTableFilterComposer,
+    $$DetectedItemsTableOrderingComposer,
+    $$DetectedItemsTableCreateCompanionBuilder,
+    $$DetectedItemsTableUpdateCompanionBuilder> {
+  $$DetectedItemsTableTableManager(_$AppDatabase db, $DetectedItemsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$DetectedItemsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$DetectedItemsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> sessionId = const Value.absent(),
+            Value<String?> workId = const Value.absent(),
+            Value<String> titleGuess = const Value.absent(),
+            Value<String> authorGuess = const Value.absent(),
+            Value<double> confidence = const Value.absent(),
+            Value<String?> imagePath = const Value.absent(),
+            Value<String?> boundingBox = const Value.absent(),
+            Value<ReviewStatus> reviewStatus = const Value.absent(),
+            Value<DateTime?> reviewedAt = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              DetectedItemsCompanion(
+            id: id,
+            sessionId: sessionId,
+            workId: workId,
+            titleGuess: titleGuess,
+            authorGuess: authorGuess,
+            confidence: confidence,
+            imagePath: imagePath,
+            boundingBox: boundingBox,
+            reviewStatus: reviewStatus,
+            reviewedAt: reviewedAt,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String sessionId,
+            Value<String?> workId = const Value.absent(),
+            required String titleGuess,
+            required String authorGuess,
+            required double confidence,
+            Value<String?> imagePath = const Value.absent(),
+            Value<String?> boundingBox = const Value.absent(),
+            Value<ReviewStatus> reviewStatus = const Value.absent(),
+            Value<DateTime?> reviewedAt = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              DetectedItemsCompanion.insert(
+            id: id,
+            sessionId: sessionId,
+            workId: workId,
+            titleGuess: titleGuess,
+            authorGuess: authorGuess,
+            confidence: confidence,
+            imagePath: imagePath,
+            boundingBox: boundingBox,
+            reviewStatus: reviewStatus,
+            reviewedAt: reviewedAt,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$DetectedItemsTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $DetectedItemsTable> {
+  $$DetectedItemsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get titleGuess => $state.composableBuilder(
+      column: $state.table.titleGuess,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get authorGuess => $state.composableBuilder(
+      column: $state.table.authorGuess,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get confidence => $state.composableBuilder(
+      column: $state.table.confidence,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get imagePath => $state.composableBuilder(
+      column: $state.table.imagePath,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get boundingBox => $state.composableBuilder(
+      column: $state.table.boundingBox,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<ReviewStatus, ReviewStatus, int>
+      get reviewStatus => $state.composableBuilder(
+          column: $state.table.reviewStatus,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get reviewedAt => $state.composableBuilder(
+      column: $state.table.reviewedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$ScanSessionsTableFilterComposer get sessionId {
+    final $$ScanSessionsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.sessionId,
+        referencedTable: $state.db.scanSessions,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ScanSessionsTableFilterComposer(ComposerState($state.db,
+                $state.db.scanSessions, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$WorksTableFilterComposer get workId {
+    final $$WorksTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.workId,
+        referencedTable: $state.db.works,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$WorksTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.works, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$DetectedItemsTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $DetectedItemsTable> {
+  $$DetectedItemsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get titleGuess => $state.composableBuilder(
+      column: $state.table.titleGuess,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get authorGuess => $state.composableBuilder(
+      column: $state.table.authorGuess,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get confidence => $state.composableBuilder(
+      column: $state.table.confidence,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get imagePath => $state.composableBuilder(
+      column: $state.table.imagePath,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get boundingBox => $state.composableBuilder(
+      column: $state.table.boundingBox,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get reviewStatus => $state.composableBuilder(
+      column: $state.table.reviewStatus,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get reviewedAt => $state.composableBuilder(
+      column: $state.table.reviewedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$ScanSessionsTableOrderingComposer get sessionId {
+    final $$ScanSessionsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.sessionId,
+        referencedTable: $state.db.scanSessions,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ScanSessionsTableOrderingComposer(ComposerState($state.db,
+                $state.db.scanSessions, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$WorksTableOrderingComposer get workId {
+    final $$WorksTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.workId,
+        referencedTable: $state.db.works,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$WorksTableOrderingComposer(
+            ComposerState(
+                $state.db, $state.db.works, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
@@ -4008,4 +5456,8 @@ class $AppDatabaseManager {
       $$WorkAuthorsTableTableManager(_db, _db.workAuthors);
   $$UserLibraryEntriesTableTableManager get userLibraryEntries =>
       $$UserLibraryEntriesTableTableManager(_db, _db.userLibraryEntries);
+  $$ScanSessionsTableTableManager get scanSessions =>
+      $$ScanSessionsTableTableManager(_db, _db.scanSessions);
+  $$DetectedItemsTableTableManager get detectedItems =>
+      $$DetectedItemsTableTableManager(_db, _db.detectedItems);
 }

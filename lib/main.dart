@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'core/router/app_router.dart';
 import 'shared/theme/app_theme.dart';
-import 'features/library/screens/library_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +25,7 @@ class BooksTrackerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Books Tracker',
       debugShowCheckedModeBanner: false,
 
@@ -34,8 +34,8 @@ class BooksTrackerApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
 
-      // Start with Library screen
-      home: const LibraryScreen(),
+      // Router configuration with StatefulShellRoute
+      routerConfig: appRouter,
     );
   }
 }
