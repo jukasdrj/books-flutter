@@ -1,0 +1,118 @@
+name: Bug Report
+description: Report a bug in BooksTrack
+title: "[Bug]: "
+labels: ["type: bug", "status: ready"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please provide detailed information below.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How severe is this bug?
+      options:
+        - P0: Critical (App crashes, data loss)
+        - P1: High (Major functionality broken)
+        - P2: Medium (Minor functionality issue)
+        - P3: Low (Cosmetic issue)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Affected Platforms
+      description: Where does this bug occur?
+      options:
+        - label: Android
+        - label: iOS
+        - label: macOS
+        - label: Web
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which component is affected?
+      options:
+        - Database (Drift)
+        - UI/Widgets
+        - API Integration
+        - AI Scanner
+        - Authentication
+        - Firebase
+        - Routing (go_router)
+        - State Management (Riverpod)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Clear and concise description of the bug
+      placeholder: What's wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this bug?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen?
+      placeholder: Describe the expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happens?
+      placeholder: Describe what actually happens
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Logs
+      description: Add screenshots or error logs
+      placeholder: Paste logs or drag images here
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Device and app version details
+      placeholder: |
+        - Device: iPhone 15 Pro
+        - OS: iOS 17.1
+        - App Version: 1.0.0
+        - Flutter Version: 3.16.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+      placeholder: Stack traces, related issues, attempted fixes

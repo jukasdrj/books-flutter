@@ -1,0 +1,178 @@
+# Zen MCP AI Provider Configuration
+# BooksTrack Flutter Project
+#
+# This file configures all your premium AI provider access for Zen MCP tools.
+# Actual API keys are stored in .env (gitignored)
+
+providers:
+  # Anthropic Claude (Your Max Plan)
+  - id: anthropic
+    type: anthropic
+    enabled: true
+    models:
+      - id: claude-sonnet-4
+        name: "Claude Sonnet 4"
+        aliases: ["sonnet", "sonnet4", "claude"]
+        capabilities: ["code", "reasoning", "vision"]
+        score: 100
+        context_window: 200000
+        supports_thinking: true
+        cost_per_1k_tokens:
+          input: 0.003
+          output: 0.015
+      - id: claude-opus-4
+        name: "Claude Opus 4"
+        aliases: ["opus", "opus4"]
+        capabilities: ["code", "reasoning", "vision", "complex"]
+        score: 100
+        context_window: 200000
+        supports_thinking: true
+        cost_per_1k_tokens:
+          input: 0.015
+          output: 0.075
+    env_key_name: ANTHROPIC_API_KEY
+
+  # Google Gemini (Paid Pro Plan)
+  - id: google
+    type: google
+    enabled: true
+    models:
+      - id: gemini-2.5-pro-exp
+        name: "Gemini 2.5 Pro Experimental"
+        aliases: ["gemini", "gem25pro", "gemini-exp"]
+        capabilities: ["code", "reasoning", "vision", "multimodal"]
+        score: 100
+        context_window: 1000000
+        supports_thinking: true
+        cost_per_1k_tokens:
+          input: 0.00125
+          output: 0.005
+      - id: gemini-2.0-flash-thinking-exp
+        name: "Gemini 2.0 Flash Thinking"
+        aliases: ["flash-thinking", "gem20flash"]
+        capabilities: ["code", "reasoning", "fast"]
+        score: 95
+        context_window: 1000000
+        supports_thinking: true
+        cost_per_1k_tokens:
+          input: 0.0
+          output: 0.0
+    env_key_name: GOOGLE_AI_API_KEY
+
+  # xAI Grok (X.AI Key)
+  - id: xai
+    type: openai_compatible
+    base_url: "https://api.x.ai/v1"
+    enabled: true
+    models:
+      - id: grok-beta
+        name: "Grok Beta"
+        aliases: ["grok", "grok-beta"]
+        capabilities: ["code", "reasoning", "realtime"]
+        score: 95
+        context_window: 131072
+        supports_thinking: true
+        cost_per_1k_tokens:
+          input: 0.005
+          output: 0.015
+    env_key_name: XAI_API_KEY
+
+  # OpenRouter (Multiple Models)
+  - id: openrouter
+    type: openai_compatible
+    base_url: "https://openrouter.ai/api/v1"
+    enabled: true
+    models:
+      # GPT-5 Pro via OpenRouter
+      - id: openai/gpt-5-pro
+        name: "GPT-5 Pro"
+        aliases: ["gpt5", "gpt-5", "openai"]
+        capabilities: ["code", "reasoning", "vision"]
+        score: 100
+        context_window: 400000
+        supports_thinking: true
+        cost_per_1k_tokens:
+          input: 0.01
+          output: 0.03
+
+      # DeepSeek V3 (Excellent for code)
+      - id: deepseek/deepseek-chat
+        name: "DeepSeek V3"
+        aliases: ["deepseek", "deepseek-v3"]
+        capabilities: ["code", "reasoning", "fast"]
+        score: 95
+        context_window: 64000
+        supports_thinking: false
+        cost_per_1k_tokens:
+          input: 0.00027
+          output: 0.0011
+
+      # Qwen 2.5 Coder (Specialized coding)
+      - id: qwen/qwen-2.5-coder-32b-instruct
+        name: "Qwen 2.5 Coder 32B"
+        aliases: ["qwen", "qwen-coder"]
+        capabilities: ["code", "refactoring", "fast"]
+        score: 90
+        context_window: 32768
+        supports_thinking: false
+        cost_per_1k_tokens:
+          input: 0.0002
+          output: 0.0008
+
+      # Llama 3.3 70B (Good balance)
+      - id: meta-llama/llama-3.3-70b-instruct
+        name: "Llama 3.3 70B"
+        aliases: ["llama", "llama3"]
+        capabilities: ["code", "reasoning"]
+        score: 85
+        context_window: 128000
+        supports_thinking: false
+        cost_per_1k_tokens:
+          input: 0.00059
+          output: 0.00079
+    env_key_name: OPENROUTER_API_KEY
+
+  # GitHub Copilot (via Copilot Plus)
+  # Note: Copilot doesn't provide direct API access for MCP
+  # But it's available in your IDE
+  # - id: github
+  #   type: github
+  #   enabled: false
+  #   note: "Use via IDE integration, not MCP"
+
+# Default model selection strategy
+model_selection:
+  # Auto-select best model based on task
+  auto_select: true
+
+  # Preferred models by task type
+  preferences:
+    code_review: ["gemini-2.5-pro-exp", "claude-sonnet-4", "gpt5"]
+    debugging: ["gemini-2.5-pro-exp", "deepseek", "claude-sonnet-4"]
+    refactoring: ["qwen", "deepseek", "claude-sonnet-4"]
+    architecture: ["claude-opus-4", "gpt5", "gemini-2.5-pro-exp"]
+    documentation: ["claude-sonnet-4", "gemini-2.5-pro-exp"]
+    planning: ["claude-opus-4", "gpt5"]
+    quick_tasks: ["flash-thinking", "deepseek", "llama"]
+
+  # Cost optimization
+  prefer_cheaper_for_simple_tasks: true
+  max_cost_per_request: 1.0  # dollars
+
+# Thinking mode settings
+thinking:
+  default_mode: "high"
+  modes:
+    minimal: "Quick tasks, minimal reasoning"
+    low: "Simple code reviews"
+    medium: "Standard development tasks"
+    high: "Complex debugging, architecture"
+    max: "Critical decisions, security audits"
+
+# Temperature settings by task
+temperature:
+  code: 0.3
+  review: 0.5
+  planning: 0.7
+  creative: 0.9
+  default: 0.7

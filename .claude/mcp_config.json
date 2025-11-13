@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "zen": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@beehiveinnovations/zen-mcp-server"
+      ],
+      "env": {
+        "ZEN_CONFIG_DIR": ".zen",
+        "ZEN_ENABLE_ALL_TOOLS": "true",
+        "ZEN_AUTO_MODEL_SELECT": "true",
+        "ZEN_THINKING_MODE": "high",
+        "ZEN_TEMPERATURE": "0.7"
+      }
+    }
+  }
+}

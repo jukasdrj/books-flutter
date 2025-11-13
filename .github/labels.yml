@@ -1,0 +1,198 @@
+# GitHub Labels Configuration
+# Apply with: gh label create --force <label> <color> <description>
+
+# Priority Labels
+- name: "P0: Critical"
+  color: "d73a4a"
+  description: "Blocks progress, must fix immediately"
+
+- name: "P1: High"
+  color: "ff6b6b"
+  description: "Important, should fix soon"
+
+- name: "P2: Medium"
+  color: "ffa500"
+  description: "Standard priority"
+
+- name: "P3: Low"
+  color: "ffeb3b"
+  description: "Nice to have, low urgency"
+
+# Type Labels
+- name: "type: bug"
+  color: "d73a4a"
+  description: "Something isn't working"
+
+- name: "type: feature"
+  color: "0366d6"
+  description: "New functionality"
+
+- name: "type: enhancement"
+  color: "a2eeef"
+  description: "Improvement to existing feature"
+
+- name: "type: refactor"
+  color: "d4c5f9"
+  description: "Code improvement, no feature change"
+
+- name: "type: docs"
+  color: "0075ca"
+  description: "Documentation updates"
+
+- name: "type: perf"
+  color: "ff9800"
+  description: "Performance optimization"
+
+- name: "type: security"
+  color: "d93f0b"
+  description: "Security fix or improvement"
+
+- name: "type: test"
+  color: "c5def5"
+  description: "Testing related"
+
+# Phase Labels
+- name: "phase: 1-foundation"
+  color: "bfd4f2"
+  description: "Phase 1: Critical foundation (Weeks 1-3)"
+
+- name: "phase: 2-search"
+  color: "b3e5fc"
+  description: "Phase 2: Search feature (Weeks 4-5)"
+
+- name: "phase: 3-scanner"
+  color: "c8e6c9"
+  description: "Phase 3: AI Scanner (Weeks 6-8)"
+
+- name: "phase: 4-insights"
+  color: "ffe0b2"
+  description: "Phase 4: Insights & Analytics (Weeks 9-10)"
+
+- name: "phase: 5-polish"
+  color: "f8bbd0"
+  description: "Phase 5: Polish & Testing (Weeks 11-12)"
+
+- name: "phase: 6-launch"
+  color: "e1bee7"
+  description: "Phase 6: Production Launch (Weeks 13-14)"
+
+# Platform Labels
+- name: "platform: android"
+  color: "3ddc84"
+  description: "Android-specific"
+
+- name: "platform: ios"
+  color: "147efb"
+  description: "iOS-specific"
+
+- name: "platform: macos"
+  color: "555555"
+  description: "macOS-specific"
+
+- name: "platform: web"
+  color: "ff6f00"
+  description: "Web-specific"
+
+- name: "platform: all"
+  color: "000000"
+  description: "Cross-platform"
+
+# Component Labels
+- name: "component: database"
+  color: "5319e7"
+  description: "Drift database layer"
+
+- name: "component: ui"
+  color: "1d76db"
+  description: "UI/widgets"
+
+- name: "component: api"
+  color: "0e8a16"
+  description: "API integration"
+
+- name: "component: scanner"
+  color: "ff6347"
+  description: "AI Scanner / Vision"
+
+- name: "component: auth"
+  color: "fbca04"
+  description: "Authentication"
+
+- name: "component: firebase"
+  color: "ffa500"
+  description: "Firebase services"
+
+- name: "component: routing"
+  color: "d876e3"
+  description: "Navigation / go_router"
+
+- name: "component: state"
+  color: "006b75"
+  description: "State management / Riverpod"
+
+# Status Labels
+- name: "status: blocked"
+  color: "b60205"
+  description: "Blocked by dependencies"
+
+- name: "status: in-progress"
+  color: "0e8a16"
+  description: "Currently being worked on"
+
+- name: "status: ready"
+  color: "0075ca"
+  description: "Ready to be worked on"
+
+- name: "status: needs-review"
+  color: "fbca04"
+  description: "Needs code review"
+
+- name: "status: needs-testing"
+  color: "ff9800"
+  description: "Needs testing"
+
+# Effort Labels
+- name: "effort: XS (< 2h)"
+  color: "c2e0c6"
+  description: "Extra small effort"
+
+- name: "effort: S (2-4h)"
+  color: "bfdadc"
+  description: "Small effort"
+
+- name: "effort: M (4-8h)"
+  color: "fef2c0"
+  description: "Medium effort"
+
+- name: "effort: L (1-2d)"
+  color: "fbca04"
+  description: "Large effort"
+
+- name: "effort: XL (3-5d)"
+  color: "d93f0b"
+  description: "Extra large effort"
+
+# Special Labels
+- name: "good first issue"
+  color: "7057ff"
+  description: "Good for newcomers"
+
+- name: "help wanted"
+  color: "008672"
+  description: "Extra attention needed"
+
+- name: "question"
+  color: "d876e3"
+  description: "Further information requested"
+
+- name: "dependencies"
+  color: "0366d6"
+  description: "Dependency updates"
+
+- name: "expert-validated"
+  color: "0e8a16"
+  description: "Validated by Zen MCP expert review"
+
+- name: "ai-review-required"
+  color: "ff6347"
+  description: "Needs Zen MCP AI code review"

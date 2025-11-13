@@ -74,6 +74,7 @@ firebase.json
 .env
 .env.local
 .env.*.local
+.env.production
 
 # Test coverage
 coverage/
@@ -82,3 +83,12 @@ coverage/
 *.apk
 *.aab
 *.ipa
+
+# Zen MCP (AI provider keys stored in .env)
+.zen/cache/
+.zen/logs/
+.zen/.session
+
+# Claude Code (keep hooks and prompts in git, but not sessions)
+.claude/.session
+.claude/cache/

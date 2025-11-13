@@ -1,0 +1,125 @@
+name: Feature Request
+description: Propose a new feature for BooksTrack
+title: "[Feature]: "
+labels: ["type: feature", "status: ready"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please fill out the details below.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature?
+      options:
+        - P0: Critical (Blocks progress)
+        - P1: High (Should fix soon)
+        - P2: Medium (Standard priority)
+        - P3: Low (Nice to have)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Development Phase
+      description: Which phase should this be implemented in?
+      options:
+        - Phase 1: Foundation (Weeks 1-3)
+        - Phase 2: Search (Weeks 4-5)
+        - Phase 3: AI Scanner (Weeks 6-8)
+        - Phase 4: Insights (Weeks 9-10)
+        - Phase 5: Polish (Weeks 11-12)
+        - Phase 6: Launch (Weeks 13-14)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platforms
+      description: Which platforms does this affect?
+      options:
+        - label: Android
+        - label: iOS
+        - label: macOS
+        - label: Web
+        - label: All platforms
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which component does this relate to?
+      options:
+        - Database (Drift)
+        - UI/Widgets
+        - API Integration
+        - AI Scanner
+        - Authentication
+        - Firebase
+        - Routing (go_router)
+        - State Management (Riverpod)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Describe the feature in detail
+      placeholder: What functionality should be added?
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-story
+    attributes:
+      label: User Story
+      description: Who benefits and why?
+      placeholder: "As a [user type], I want [goal] so that [benefit]"
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How do we know this is complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Tests pass
+    validations:
+      required: true
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated Effort
+      description: How much time will this take?
+      options:
+        - "XS: < 2 hours"
+        - "S: 2-4 hours"
+        - "M: 4-8 hours"
+        - "L: 1-2 days"
+        - "XL: 3-5 days"
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-details
+    attributes:
+      label: Technical Details (Optional)
+      description: Implementation notes, dependencies, code snippets
+      placeholder: Any specific technical requirements or approaches?
+
+  - type: textarea
+    id: related-issues
+    attributes:
+      label: Related Issues
+      description: Link to blocking or related issues
+      placeholder: "#123, #456"
