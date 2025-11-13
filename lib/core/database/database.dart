@@ -404,9 +404,12 @@ class AppDatabase extends _$AppDatabase {
   // ==================== LIBRARY QUERIES ====================
 
   /// Watch all library entries with optional status filter and keyset pagination
+  ///
+  /// Keyset pagination uses composite cursor: "timestamp_iso8601|id"
+  /// Example: "2024-01-15T10:30:00.000Z|abc123"
   Stream<List<WorkWithLibraryStatus>> watchLibrary({
     ReadingStatus? filterStatus,
-    String? cursor,  // Last entry ID for keyset pagination
+    String? cursor,  // Composite cursor: "timestamp|id" from last item
     int limit = 50,
   }) {
     final query = select(userLibraryEntries).join([
@@ -418,13 +421,24 @@ class AppDatabase extends _$AppDatabase {
       query.where(userLibraryEntries.status.equals(filterStatus.index));
     }
 
-    // Keyset pagination: fetch entries with ID smaller than cursor
-    if (cursor != null) {
-      query.where(userLibraryEntries.id.isSmallerThan(cursor));
+    // Keyset pagination using composite key (updatedAt, id)
+    if (cursor != null && cursor.contains('|')) {
+      final parts = cursor.split('|');
+      final lastTimestamp = DateTime.parse(parts[0]);
+      final lastId = parts[1];
+
+      query.where(
+        userLibraryEntries.updatedAt.isSmallerThanValue(lastTimestamp) |
+        (userLibraryEntries.updatedAt.equals(lastTimestamp) &
+            userLibraryEntries.id.isSmallerThan(lastId)),
+      );
     }
 
     query
-      ..orderBy([OrderingTerm.desc(userLibraryEntries.updatedAt)])
+      ..orderBy([
+        OrderingTerm.desc(userLibraryEntries.updatedAt),
+        OrderingTerm.desc(userLibraryEntries.id), // Tie-breaker for same timestamp
+      ])
       ..limit(limit);
 
     return query.watch().asyncMap((rows) async {

@@ -23,6 +23,11 @@ class DTOMapper {
       }
     }
 
+    // Validate work/edition count match
+    if (data.works.length != data.editions.length) {
+      print('⚠️ Warning: Works count (${data.works.length}) != Editions count (${data.editions.length}). Using index-based mapping may cause mismatches.');
+    }
+
     // Process each work
     for (var i = 0; i < data.works.length; i++) {
       final workDTO = data.works[i];
@@ -32,6 +37,11 @@ class DTOMapper {
       final authorDTOs = data.authors
           .where((a) => workDTO.authorIds.contains(a.id))
           .toList();
+
+      // Warn if no authors found for this work
+      if (authorDTOs.isEmpty && workDTO.authorIds.isNotEmpty) {
+        print('⚠️ Warning: Work "${workDTO.title}" has ${workDTO.authorIds.length} author IDs but no matching authors in response');
+      }
 
       // Check for duplicates (synthetic works with same ISBN)
       if (workDTO.synthetic && editionDTO?.isbn != null) {
@@ -43,7 +53,7 @@ class DTOMapper {
       }
 
       // Map DTOs to database models
-      final workCompanion = _mapWorkDTOToCompanion(workDTO, editionDTO);
+      final workCompanion = _mapWorkDTOToCompanion(workDTO, editionDTO, authorDTOs);
       final authorCompanions = authorDTOs.map(_mapAuthorDTOToCompanion).toList();
 
       // Insert into database
@@ -69,11 +79,18 @@ class DTOMapper {
   }
 
   /// Map WorkDTO to WorksCompanion
-  static WorksCompanion _mapWorkDTOToCompanion(WorkDTO dto, EditionDTO? edition) {
+  static WorksCompanion _mapWorkDTOToCompanion(
+    WorkDTO dto,
+    EditionDTO? edition,
+    List<AuthorDTO> authors,
+  ) {
+    // Join author names with comma separator
+    final authorNames = authors.map((a) => a.name).join(', ');
+
     return WorksCompanion.insert(
       id: _uuid.v4(),
       title: dto.title,
-      author: Value(edition?.publisher), // Temporary, should come from authors
+      author: Value(authorNames.isNotEmpty ? authorNames : null),
       subjectTags: Value(dto.subjectTags),
       synthetic: Value(dto.synthetic),
       primaryProvider: Value(dto.primaryProvider),
