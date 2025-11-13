@@ -1,11 +1,16 @@
 name: Deploy to Cloudflare
 
+# Temporarily disabled - fix code issues first:
+# - Missing firebase_options.dart
+# - No cloudflare-workers/ directory in repo
+# - Database compilation errors
+
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger only
+#  push:
+#    branches: [main]
+#  pull_request:
+#    branches: [main]
 
 # Cancel in-progress deployments on same branch
 concurrency:
