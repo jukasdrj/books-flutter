@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "989217966501",
+    "project_id": "flutter-books-857d3",
+    "storage_bucket": "flutter-books-857d3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989217966501:android:a668e9e2b6213cdc15c04c",
+        "android_client_info": {
+          "package_name": "books_flutter.ooheynerds.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeZ2PzX9lJpl4VMn-Y0KJcFc8IImLl8UM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989217966501:android:6becaa7e51835fcb15c04c",
+        "android_client_info": {
+          "package_name": "flutter_books.oooefam.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeZ2PzX9lJpl4VMn-Y0KJcFc8IImLl8UM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989217966501:android:174a9bb2ecfa163315c04c",
+        "android_client_info": {
+          "package_name": "oooefam.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeZ2PzX9lJpl4VMn-Y0KJcFc8IImLl8UM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

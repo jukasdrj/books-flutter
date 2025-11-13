@@ -1,0 +1,18 @@
+targets:
+  $default:
+    builders:
+      drift_dev|not_shared:
+        enabled: true
+        options:
+          skip_verification_code: false
+        generate_for:
+          exclude:
+            - lib/features/**/providers/**
+            - lib/**/*_provider.dart
+            - test/**
+
+      drift_dev|modular:
+        enabled: false
+
+      drift_dev|analyzer:
+        enabled: false

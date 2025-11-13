@@ -120,6 +120,21 @@
 			"label": "Stage the remaining file",
 			"type": "shell",
 			"command": "git add .vscode/tasks.json"
+		},
+		{
+			"label": "Check staged changes",
+			"type": "shell",
+			"command": "git diff --cached"
+		},
+		{
+			"label": "Commit staged changes",
+			"type": "shell",
+			"command": "git commit -m \"fix: update test expectations and build artifacts\n\n- Fix widget test to match actual empty state text\n- Update .gitignore to exclude build artifacts\n- Update VS Code tasks configuration\""
+		},
+		{
+			"label": "Push changes",
+			"type": "shell",
+			"command": "git push"
 		}
 	]
 }

@@ -10,6 +10,14 @@ enum ReviewStatus {
   userEdited,    // Human corrected AI result
 }
 
+/// ReadingStatus enum for tracking user's reading progress
+enum ReadingStatus {
+  wishlist,   // Want to read
+  toRead,     // Owned but not started
+  reading,    // Currently reading
+  read,       // Finished reading
+}
+
 /// EditionFormat enum
 enum EditionFormat {
   hardcover,
@@ -154,16 +162,55 @@ class WorkAuthors extends Table {
   Set<Column> get primaryKey => {workId, authorId};
 }
 
+/// UserLibraryEntries table - Tracks user's reading status and progress
+class UserLibraryEntries extends Table {
+  // Primary Key
+  TextColumn get id => text()();
+
+  // Foreign Keys
+  TextColumn get workId => text().references(Works, #id, onDelete: KeyAction.cascade)();
+  TextColumn get editionId => text().references(Editions, #id, onDelete: KeyAction.setNull).nullable()();
+
+  // Reading Status & Progress
+  IntColumn get status => intEnum<ReadingStatus>().withDefault(const Constant(0))(); // wishlist
+  IntColumn get currentPage => integer().nullable()();
+  DateTimeColumn get completionDate => dateTime().nullable()();
+  IntColumn get personalRating => integer().nullable()(); // 1-5 stars
+  TextColumn get notes => text().nullable()();
+
+  // Timestamps
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// Main database class
-@DriftDatabase(tables: [Works, Editions, Authors, WorkAuthors])
+@DriftDatabase(tables: [Works, Editions, Authors, WorkAuthors, UserLibraryEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'books_tracker_db');
+  }
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        await m.createAll();
+      },
+      onUpgrade: (Migrator m, int from, int to) async {
+        if (from < 2) {
+          // Add UserLibraryEntries table in version 2
+          await m.createTable(userLibraryEntries);
+        }
+      },
+    );
   }
 
   // ==================== QUERIES ====================
@@ -256,6 +303,111 @@ class AppDatabase extends _$AppDatabase {
     }
     return result;
   }
+
+  // ==================== LIBRARY QUERIES ====================
+
+  /// Watch all library entries with optional status filter
+  Stream<List<WorkWithLibraryStatus>> watchLibrary({ReadingStatus? filterStatus}) {
+    final query = select(userLibraryEntries).join([
+      innerJoin(works, works.id.equalsExp(userLibraryEntries.workId)),
+      leftOuterJoin(editions, editions.id.equalsExp(userLibraryEntries.editionId)),
+    ]);
+
+    if (filterStatus != null) {
+      query.where(userLibraryEntries.status.equals(filterStatus.index));
+    }
+
+    query.orderBy([OrderingTerm.desc(userLibraryEntries.updatedAt)]);
+
+    return query.watch().asyncMap((rows) async {
+      final List<WorkWithLibraryStatus> result = [];
+      for (final row in rows) {
+        final work = row.readTable(works);
+        final entry = row.readTable(userLibraryEntries);
+        final edition = row.readTableOrNull(editions);
+        final authors = await _getAuthorsForWork(work.id);
+
+        result.add(WorkWithLibraryStatus(
+          work: work,
+          authors: authors,
+          edition: edition,
+          libraryEntry: entry,
+        ));
+      }
+      return result;
+    });
+  }
+
+  /// Add or update a library entry
+  Future<void> upsertLibraryEntry(UserLibraryEntriesCompanion entry) async {
+    await into(userLibraryEntries).insertOnConflictUpdate(entry);
+  }
+
+  /// Update reading status
+  Future<void> updateReadingStatus(String entryId, ReadingStatus newStatus) async {
+    final update = UserLibraryEntriesCompanion(
+      id: Value(entryId),
+      status: Value(newStatus),
+      updatedAt: Value(DateTime.now()),
+      completionDate: newStatus == ReadingStatus.read
+        ? Value(DateTime.now())
+        : const Value(null),
+    );
+    await upsertLibraryEntry(update);
+  }
+
+  /// Update current page
+  Future<void> updateCurrentPage(String entryId, int page) async {
+    final update = UserLibraryEntriesCompanion(
+      id: Value(entryId),
+      currentPage: Value(page),
+      updatedAt: Value(DateTime.now()),
+    );
+    await upsertLibraryEntry(update);
+  }
+
+  /// Update personal rating
+  Future<void> updateRating(String entryId, int rating) async {
+    final update = UserLibraryEntriesCompanion(
+      id: Value(entryId),
+      personalRating: Value(rating),
+      updatedAt: Value(DateTime.now()),
+    );
+    await upsertLibraryEntry(update);
+  }
+
+  /// Delete library entry
+  Future<void> deleteLibraryEntry(String entryId) async {
+    await (delete(userLibraryEntries)..where((t) => t.id.equals(entryId))).go();
+  }
+
+  /// Get reading statistics
+  Future<ReadingStatistics> getReadingStatistics() async {
+    final allEntries = await select(userLibraryEntries).get();
+
+    final now = DateTime.now();
+    final yearStart = DateTime(now.year, 1, 1);
+
+    final booksReadThisYear = allEntries.where((e) =>
+      e.status == ReadingStatus.read &&
+      e.completionDate != null &&
+      e.completionDate!.isAfter(yearStart)
+    ).length;
+
+    final statusDistribution = <ReadingStatus, int>{};
+    for (final status in ReadingStatus.values) {
+      statusDistribution[status] = allEntries.where((e) => e.status == status).length;
+    }
+
+    final currentlyReading = statusDistribution[ReadingStatus.reading] ?? 0;
+
+    return ReadingStatistics(
+      booksReadThisYear: booksReadThisYear,
+      totalBooks: allEntries.length,
+      currentlyReading: currentlyReading,
+      statusDistribution: statusDistribution,
+    );
+  }
 }
 
 /// Helper class to combine Work with its Authors
@@ -264,4 +416,47 @@ class WorkWithAuthors {
   final List<Author> authors;
 
   WorkWithAuthors({required this.work, required this.authors});
+}
+
+/// Helper class to combine Work with Library Status
+class WorkWithLibraryStatus {
+  final Work work;
+  final List<Author> authors;
+  final Edition? edition;
+  final UserLibraryEntry libraryEntry;
+
+  WorkWithLibraryStatus({
+    required this.work,
+    required this.authors,
+    required this.edition,
+    required this.libraryEntry,
+  });
+
+  String get displayAuthor => authors.isNotEmpty
+      ? authors.map((a) => a.name).join(', ')
+      : work.author ?? 'Unknown Author';
+
+  ReadingStatus get status => libraryEntry.status;
+
+  double? get readingProgress {
+    if (libraryEntry.currentPage == null || edition?.pageCount == null) {
+      return null;
+    }
+    return libraryEntry.currentPage! / edition!.pageCount!;
+  }
+}
+
+/// Reading statistics data class
+class ReadingStatistics {
+  final int booksReadThisYear;
+  final int totalBooks;
+  final int currentlyReading;
+  final Map<ReadingStatus, int> statusDistribution;
+
+  ReadingStatistics({
+    required this.booksReadThisYear,
+    required this.totalBooks,
+    required this.currentlyReading,
+    required this.statusDistribution,
+  });
 }
