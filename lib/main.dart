@@ -26,7 +26,7 @@ class BooksTrackerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Books Tracker',
+      title: 'BooksTrack',
       debugShowCheckedModeBanner: false,
 
       // Material Design 3 themes
