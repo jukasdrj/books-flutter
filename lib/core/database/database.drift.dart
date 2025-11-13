@@ -2357,6 +2357,10 @@ class $UserLibraryEntriesTable extends UserLibraryEntries
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {workId},
+      ];
+  @override
   UserLibraryEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UserLibraryEntry(

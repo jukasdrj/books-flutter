@@ -9,6 +9,7 @@ part 'work_dto.g.dart';
 class WorkDTO with _$WorkDTO {
   const factory WorkDTO({
     required String title,
+    @Default([]) List<String> authorIds,  // Author IDs from backend
     @Default([]) List<String> subjectTags,
     @Default(false) bool synthetic,
     String? primaryProvider,
@@ -44,6 +45,7 @@ class EditionDTO with _$EditionDTO {
 @freezed
 class AuthorDTO with _$AuthorDTO {
   const factory AuthorDTO({
+    required String id,  // Backend-provided author ID for relationship mapping
     required String name,
     @Default('unknown') String gender,
     String? culturalRegion,

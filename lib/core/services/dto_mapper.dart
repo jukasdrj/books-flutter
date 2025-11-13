@@ -27,11 +27,11 @@ class DTOMapper {
     for (var i = 0; i < data.works.length; i++) {
       final workDTO = data.works[i];
       final editionDTO = i < data.editions.length ? data.editions[i] : null;
-      final authorDTOs = data.authors.where((a) {
-        // In real implementation, backend should provide work-author relationships
-        // For now, assume authors in same order as works
-        return true;
-      }).toList();
+
+      // Map authors using authorIds from WorkDTO (backend provides correct relationships)
+      final authorDTOs = data.authors
+          .where((a) => workDTO.authorIds.contains(a.id))
+          .toList();
 
       // Check for duplicates (synthetic works with same ISBN)
       if (workDTO.synthetic && editionDTO?.isbn != null) {
@@ -113,7 +113,7 @@ class DTOMapper {
   /// Map AuthorDTO to AuthorsCompanion
   static AuthorsCompanion _mapAuthorDTOToCompanion(AuthorDTO dto) {
     return AuthorsCompanion.insert(
-      id: _uuid.v4(),
+      id: dto.id,  // Use backend-provided ID (not UUID)
       name: dto.name,
       gender: Value(_parseGender(dto.gender)),
       culturalRegion: Value(_parseCulturalRegion(dto.culturalRegion)),

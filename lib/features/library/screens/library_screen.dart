@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/database/database.dart';
+import '../../../shared/widgets/book_card.dart';
+import '../../../shared/widgets/book_grid_card.dart';
 import '../providers/library_providers.dart';
-import '../widgets/book_card.dart';
-import '../widgets/book_grid_card.dart';
 
 /// Library Screen - Main screen showing user's book collection
 class LibraryScreen extends ConsumerStatefulWidget {

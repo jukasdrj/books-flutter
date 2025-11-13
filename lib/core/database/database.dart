@@ -184,6 +184,18 @@ class UserLibraryEntries extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
+
+  @override
+  List<Set<Column>> get uniqueKeys => [
+    {workId},  // One library entry per work per user
+  ];
+
+  // Index for efficient keyset pagination queries
+  @override
+  List<Index> get indexes => [
+    Index('idx_library_updated_id', [updatedAt, id]),
+    Index('idx_library_status_updated', [status, updatedAt]),
+  ];
 }
 
 /// Main database class
@@ -192,7 +204,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;  // Added indexes for keyset pagination
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'books_tracker_db');
@@ -221,10 +233,16 @@ class AppDatabase extends _$AppDatabase {
       ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
       .watch()
       .asyncMap((worksList) async {
+        if (worksList.isEmpty) return [];
+
+        // Batch fetch all authors for all works (eliminates N+1 query problem)
+        final workIds = worksList.map((work) => work.id).toList();
+        final authorsMap = await _getBatchAuthorsForWorks(workIds);
+
         final List<WorkWithAuthors> result = [];
         for (final work in worksList) {
-          final authors = await _getAuthorsForWork(work.id);
-          result.add(WorkWithAuthors(work: work, authors: authors));
+          final workAuthors = authorsMap[work.id] ?? [];
+          result.add(WorkWithAuthors(work: work, authors: workAuthors));
         }
         return result;
       });
@@ -250,6 +268,32 @@ class AppDatabase extends _$AppDatabase {
 
     final results = await query.get();
     return results.map((row) => row.readTable(authors)).toList();
+  }
+
+  /// Batch fetch authors for multiple works (eliminates N+1 query problem)
+  Future<Map<String, List<Author>>> _getBatchAuthorsForWorks(List<String> workIds) async {
+    if (workIds.isEmpty) return {};
+
+    // Single query to fetch all work-author relationships for the given work IDs
+    final query = select(authors).join([
+      innerJoin(
+        workAuthors,
+        workAuthors.authorId.equalsExp(authors.id),
+      ),
+    ])..where(workAuthors.workId.isIn(workIds))
+      ..orderBy([OrderingTerm.asc(workAuthors.authorOrder)]);
+
+    final results = await query.get();
+
+    // Group authors by work ID
+    final Map<String, List<Author>> authorsMap = {};
+    for (final row in results) {
+      final author = row.readTable(authors);
+      final workAuthor = row.readTable(workAuthors);
+      authorsMap.putIfAbsent(workAuthor.workId, () => []).add(author);
+    }
+
+    return authorsMap;
   }
 
   /// Insert work with authors
@@ -306,8 +350,12 @@ class AppDatabase extends _$AppDatabase {
 
   // ==================== LIBRARY QUERIES ====================
 
-  /// Watch all library entries with optional status filter
-  Stream<List<WorkWithLibraryStatus>> watchLibrary({ReadingStatus? filterStatus}) {
+  /// Watch all library entries with optional status filter and keyset pagination
+  Stream<List<WorkWithLibraryStatus>> watchLibrary({
+    ReadingStatus? filterStatus,
+    String? cursor,  // Last entry ID for keyset pagination
+    int limit = 50,
+  }) {
     final query = select(userLibraryEntries).join([
       innerJoin(works, works.id.equalsExp(userLibraryEntries.workId)),
       leftOuterJoin(editions, editions.id.equalsExp(userLibraryEntries.editionId)),
@@ -317,19 +365,32 @@ class AppDatabase extends _$AppDatabase {
       query.where(userLibraryEntries.status.equals(filterStatus.index));
     }
 
-    query.orderBy([OrderingTerm.desc(userLibraryEntries.updatedAt)]);
+    // Keyset pagination: fetch entries with ID smaller than cursor
+    if (cursor != null) {
+      query.where(userLibraryEntries.id.isSmallerThan(cursor));
+    }
+
+    query
+      ..orderBy([OrderingTerm.desc(userLibraryEntries.updatedAt)])
+      ..limit(limit);
 
     return query.watch().asyncMap((rows) async {
+      if (rows.isEmpty) return [];
+
+      // Batch fetch all authors for all works (eliminates N+1 query problem)
+      final workIds = rows.map((row) => row.readTable(works).id).toList();
+      final authorsMap = await _getBatchAuthorsForWorks(workIds);
+
       final List<WorkWithLibraryStatus> result = [];
       for (final row in rows) {
         final work = row.readTable(works);
         final entry = row.readTable(userLibraryEntries);
         final edition = row.readTableOrNull(editions);
-        final authors = await _getAuthorsForWork(work.id);
+        final workAuthors = authorsMap[work.id] ?? [];
 
         result.add(WorkWithLibraryStatus(
           work: work,
-          authors: authors,
+          authors: workAuthors,
           edition: edition,
           libraryEntry: entry,
         ));
