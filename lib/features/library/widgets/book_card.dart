@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/database/database.dart';
+import 'package:books_flutter/core/data/database/database.dart';';
 
 /// A card widget displaying book information in the library
 class BookCard extends StatelessWidget {

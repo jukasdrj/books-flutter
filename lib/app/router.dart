@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/library/screens/library_screen.dart';
-import '../../features/search/screens/search_screen.dart';
-import '../../features/scanner/screens/scanner_screen.dart';
-import '../../features/insights/screens/insights_screen.dart';
-import '../../shared/widgets/main_scaffold.dart';
+import 'package:books_flutter/features/library/presentation/screens/library_screen.dart';
+import 'package:books_flutter/features/search/presentation/screens/search_screen.dart';
+import 'package:books_flutter/features/scanner/presentation/screens/scanner_screen.dart';
+import 'package:books_flutter/features/insights/presentation/screens/insights_screen.dart';
+import 'package:books_flutter/shared/widgets/layouts/main_scaffold.dart';';
 
 /// App-wide routing configuration using go_router
 /// Uses StatefulShellRoute for persistent tab navigation state

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/database/database.dart';
+import 'package:books_flutter/core/data/database/database.dart';';
 
 /// A compact grid card widget for displaying books in grid view
 class BookGridCard extends StatelessWidget {
