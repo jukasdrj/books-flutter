@@ -30,6 +30,31 @@
 			"label": "Stage changes",
 			"type": "shell",
 			"command": "git add ."
+		},
+		{
+			"label": "Pull changes",
+			"type": "shell",
+			"command": "git pull"
+		},
+		{
+			"label": "Pull with merge",
+			"type": "shell",
+			"command": "git pull --no-rebase"
+		},
+		{
+			"label": "Pop stashed changes",
+			"type": "shell",
+			"command": "git stash pop"
+		},
+		{
+			"label": "Commit merge",
+			"type": "shell",
+			"command": "git commit -m \"Merge remote changes\""
+		},
+		{
+			"label": "Add and commit changes",
+			"type": "shell",
+			"command": "git add . && git commit -m \"feat: enhance app compliance with latest Flutter guidance\n\n- Fix Material 3 theme to use CardThemeData\n- Add riverpod_lint for better code quality\n- Generate Drift database models and providers\n- Implement comprehensive error handling with Dio interceptors\n- Add initial testing framework with widget tests\n- Update camera and mobile_scanner dependencies\n- Improve accessibility with semantic labels\n- Respect PRD requirements for MVP structure\""
 		}
 	]
 }
