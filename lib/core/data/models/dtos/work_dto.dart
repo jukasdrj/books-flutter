@@ -8,7 +8,9 @@ part 'work_dto.g.dart';
 @freezed
 class WorkDTO with _$WorkDTO {
   const factory WorkDTO({
+    required String id,  // Work ID from API
     required String title,
+    String? subtitle,  // Optional subtitle from canonical spec
     @Default([]) List<String> authorIds,  // Author IDs from backend
     @Default([]) List<String> subjectTags,
     @Default(false) bool synthetic,

@@ -88,7 +88,7 @@ class DTOMapper {
     final authorNames = authors.map((a) => a.name).join(', ');
 
     return WorksCompanion.insert(
-      id: _uuid.v4(),
+      id: dto.id,  // Use API-provided ID instead of generating UUID
       title: dto.title,
       author: Value(authorNames.isNotEmpty ? authorNames : null),
       subjectTags: Value(dto.subjectTags),
