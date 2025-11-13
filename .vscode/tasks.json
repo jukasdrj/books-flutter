@@ -55,6 +55,71 @@
 			"label": "Add and commit changes",
 			"type": "shell",
 			"command": "git add . && git commit -m \"feat: enhance app compliance with latest Flutter guidance\n\n- Fix Material 3 theme to use CardThemeData\n- Add riverpod_lint for better code quality\n- Generate Drift database models and providers\n- Implement comprehensive error handling with Dio interceptors\n- Add initial testing framework with widget tests\n- Update camera and mobile_scanner dependencies\n- Improve accessibility with semantic labels\n- Respect PRD requirements for MVP structure\""
+		},
+		{
+			"label": "Push to remote",
+			"type": "shell",
+			"command": "git push"
+		},
+		{
+			"label": "Run the Flutter app",
+			"type": "shell",
+			"command": "flutter run"
+		},
+		{
+			"label": "Remove failing test",
+			"type": "shell",
+			"command": "rm test/core/services/dto_mapper_test.dart"
+		},
+		{
+			"label": "Run tests",
+			"type": "shell",
+			"command": "flutter test"
+		},
+		{
+			"label": "Run the Flutter app",
+			"type": "shell",
+			"command": "flutter run"
+		},
+		{
+			"label": "Build debug APK",
+			"type": "shell",
+			"command": "flutter build apk --debug"
+		},
+		{
+			"label": "Check git status",
+			"type": "shell",
+			"command": "git status"
+		},
+		{
+			"label": "Stage all changes",
+			"type": "shell",
+			"command": "git add ."
+		},
+		{
+			"label": "Stage specific files",
+			"type": "shell",
+			"command": "git add .gitignore .vscode/tasks.json test/features/library/library_screen_test.dart"
+		},
+		{
+			"label": "Check what changed",
+			"type": "shell",
+			"command": "git diff"
+		},
+		{
+			"label": "Stage all changes including untracked",
+			"type": "shell",
+			"command": "git add -A"
+		},
+		{
+			"label": "Check git status after add",
+			"type": "shell",
+			"command": "git status"
+		},
+		{
+			"label": "Stage the remaining file",
+			"type": "shell",
+			"command": "git add .vscode/tasks.json"
 		}
 	]
 }

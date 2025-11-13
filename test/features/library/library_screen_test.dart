@@ -24,8 +24,8 @@ void main() {
 
     // Check that the empty state is displayed
     expect(find.text('My Library'), findsOneWidget);
-    expect(find.text('No books in your library yet'), findsOneWidget);
-    expect(find.text('Start by scanning your bookshelf!'), findsOneWidget);
+    expect(find.text('Your library is empty'), findsOneWidget);
+    expect(find.text('Add books by scanning, searching, or manual entry'), findsOneWidget);
   });
 
   testWidgets('LibraryScreen shows loading indicator', (WidgetTester tester) async {
