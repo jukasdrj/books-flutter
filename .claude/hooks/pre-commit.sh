@@ -36,7 +36,18 @@ if [ $FAILED -eq 0 ]; then
   echo -e "${GREEN}✓ No sensitive files detected${NC}"
 fi
 
-# 2. Dart analyzer (if Flutter available)
+# 2. Check for code generation needed
+if command -v flutter &> /dev/null; then
+  echo "⚙️  Checking code generation..."
+  STAGED_PROVIDERS=$(git diff --cached --name-only --diff-filter=ACM | grep -E "(provider|database|drift).*\.dart$" || true)
+
+  if [ -n "$STAGED_PROVIDERS" ]; then
+    echo -e "${YELLOW}ℹ Info: Provider/Database files changed${NC}"
+    echo "  Ensure you've run: dart run build_runner build --delete-conflicting-outputs"
+  fi
+fi
+
+# 3. Dart analyzer (if Flutter available)
 if command -v flutter &> /dev/null; then
   echo "🎯 Running Dart analyzer..."
   STAGED_DART=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.dart$' || true)
@@ -51,7 +62,7 @@ if command -v flutter &> /dev/null; then
   fi
 fi
 
-# 3. Check for debug print statements
+# 4. Check for debug print statements
 echo "🐛 Checking for debug statements..."
 DEBUG_COUNT=$(git diff --cached | grep -c "print(" || true)
 
@@ -60,7 +71,7 @@ if [ $DEBUG_COUNT -gt 0 ]; then
   echo "  Consider using debugPrint() or proper logging"
 fi
 
-# 4. Check pubspec.yaml changes
+# 5. Check pubspec.yaml changes
 if git diff --cached --name-only | grep -q "pubspec.yaml"; then
   echo "📦 Checking pubspec.yaml..."
 

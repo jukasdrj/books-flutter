@@ -36,21 +36,23 @@
 
 ## Delegation Patterns
 
-### When to Delegate to cloudflare-agent
+### When to Delegate to flutter-agent
 ```
 User request contains:
-- "deploy", "rollback", "wrangler"
-- "production error", "5xx", "logs"
-- "monitor", "metrics", "analytics"
-- "KV cache", "Durable Object"
-- Performance issues (latency, cold starts)
+- "build", "deploy", "test", "run"
+- "code generation", "build_runner"
+- "Firebase deploy", "hosting"
+- "Android", "iOS", "Web", "macOS"
+- "pub get", "dependencies", "packages"
+- "hot reload", "profile", "analyze"
 
 Example:
-User: "Deploy to production and monitor for errors"
-Manager: Delegates to cloudflare-agent with context:
+User: "Build for Android and iOS"
+Manager: Delegates to flutter-agent with context:
   - Current branch and git status
-  - Recent changes from git log
-  - Monitoring duration: 5 minutes
+  - Ensure code generation runs first
+  - Build for both platforms
+  - Report any platform-specific issues (e.g., macOS gRPC)
 ```
 
 ### When to Delegate to zen-mcp-master
@@ -73,17 +75,17 @@ Manager: Delegates to zen-mcp-master with:
 ### When to Coordinate Both Agents
 ```
 Complex workflows requiring:
-- Code review → Deploy → Monitor
-- Debug → Fix → Validate → Deploy
+- Code review → Build → Deploy
+- Debug → Fix → Test → Build
 - Refactor → Test → Review → Deploy
 
 Example:
-User: "Implement rate limiting and deploy safely"
+User: "Review my changes and build for release"
 Manager:
-  1. Plans implementation strategy
+  1. Delegates pre-commit validation to zen-mcp-master (precommit)
   2. Delegates code review to zen-mcp-master (codereview)
-  3. Delegates deployment to cloudflare-agent
-  4. Monitors results and reports back
+  3. Delegates build to flutter-agent (with code generation)
+  4. Reports build results and any issues
 ```
 
 ---
@@ -111,39 +113,39 @@ Manager:
 
 ## Decision Trees
 
-### Deployment Request
+### Build/Deploy Request
 ```
 Is this a critical hotfix?
 ├─ Yes → Fast path:
 │   1. Quick validation (zen-mcp-master: codereview, internal validation)
-│   2. Deploy immediately (cloudflare-agent)
-│   3. Monitor closely (cloudflare-agent: 10 min)
+│   2. Build immediately (flutter-agent: with code generation)
+│   3. Deploy to Firebase if web (flutter-agent)
 │
 └─ No → Careful path:
     1. Comprehensive review (zen-mcp-master: codereview, external validation)
-    2. Security audit if touching auth/validation (zen-mcp-master: secaudit)
-    3. Deploy with gradual rollout (cloudflare-agent)
-    4. Standard monitoring (cloudflare-agent: 5 min)
+    2. Security audit if touching auth/Firebase (zen-mcp-master: secaudit)
+    3. Build for all platforms (flutter-agent)
+    4. Deploy web to Firebase (flutter-agent)
+    5. Escalate app store submissions to human
 ```
 
 ### Error Investigation
 ```
 Error severity?
-├─ Critical (5xx spike, downtime) → Fast response:
-│   1. Immediate rollback (cloudflare-agent)
-│   2. Parallel investigation:
-│      - Logs analysis (cloudflare-agent)
-│      - Code debugging (zen-mcp-master: debug)
-│   3. Root cause analysis (zen-mcp-master: thinkdeep)
-│   4. Fix validation (zen-mcp-master: codereview)
-│   5. Re-deploy with monitoring (cloudflare-agent)
+├─ Critical (app crashes, data loss) → Fast response:
+│   1. Investigate error (zen-mcp-master: debug)
+│   2. Identify root cause
+│   3. Implement fix
+│   4. Quick validation (zen-mcp-master: codereview, internal)
+│   5. Build and test (flutter-agent)
+│   6. Deploy hotfix to Firebase if web
 │
 └─ Non-critical → Systematic approach:
-    1. Analyze logs for patterns (cloudflare-agent)
+    1. Reproduce issue (flutter-agent: run in debug mode)
     2. Debug with context (zen-mcp-master: debug)
     3. Propose fix
-    4. Review and test
-    5. Deploy during off-peak hours
+    4. Review and test (flutter-agent)
+    5. Build for release (flutter-agent)
 ```
 
 ### Code Review Request
@@ -156,10 +158,11 @@ Scope of changes?
 │   zen-mcp-master: codereview (external validation)
 │   + analyze (if architecture changes)
 │
-└─ Security-critical (auth, validation) → Deep audit:
+└─ Security-critical (auth, Firebase rules, API keys) → Deep audit:
     1. zen-mcp-master: secaudit (comprehensive)
     2. zen-mcp-master: codereview (external validation)
-    3. Request human approval before deploy
+    3. flutter-agent: test with Firebase emulators
+    4. Request human approval before deploy
 ```
 
 ---
@@ -170,50 +173,57 @@ Scope of changes?
 ```
 Phase 1: Planning
 - Analyze requirements
-- Check for existing patterns
-- Plan file structure
+- Check for existing patterns in CLAUDE.md
+- Plan feature-first structure
 
 Phase 2: Implementation
 - Claude Code implements across files
-- zen-mcp-master: codereview (validate patterns)
+- flutter-agent: run build_runner watch mode
+- zen-mcp-master: codereview (validate Flutter/Dart patterns)
 
 Phase 3: Testing
-- zen-mcp-master: testgen (generate tests)
-- Run tests locally
+- zen-mcp-master: testgen (generate widget/unit tests)
+- flutter-agent: run tests locally
+- flutter-agent: test on iOS/Android/Web
 
 Phase 4: Security
-- zen-mcp-master: secaudit (if feature touches sensitive areas)
+- zen-mcp-master: secaudit (if Firebase/auth touched)
 
-Phase 5: Deployment
+Phase 5: Build & Deploy
 - zen-mcp-master: precommit (validate git changes)
-- cloudflare-agent: deploy + monitor
+- flutter-agent: code generation + build all platforms
+- flutter-agent: deploy web to Firebase
+- Escalate app store submissions to human
 
 Phase 6: Documentation
-- Update API docs if needed
-- Record decisions in sprint docs
+- Update feature documentation
+- Record decisions in implementation log
 ```
 
 ### Incident Response
 ```
 Phase 1: Triage (Immediate)
-- cloudflare-agent: analyze logs
+- flutter-agent: reproduce issue in debug mode
 - Assess severity and impact
-- Decision: rollback or investigate?
+- Check Firebase logs/Analytics if applicable
 
-Phase 2: Investigation (Parallel)
-- cloudflare-agent: monitor metrics
+Phase 2: Investigation
 - zen-mcp-master: debug root cause
+- flutter-agent: test with different configurations
 
 Phase 3: Resolution
 - Implement fix
+- flutter-agent: run code generation if needed
 - zen-mcp-master: codereview (fast internal validation)
 
-Phase 4: Deployment
-- cloudflare-agent: deploy with extended monitoring
+Phase 4: Build & Deploy
+- flutter-agent: build and test
+- flutter-agent: deploy web to Firebase if applicable
+- Escalate app store updates to human
 
 Phase 5: Post-Mortem
 - zen-mcp-master: thinkdeep (what went wrong, how to prevent)
-- Document learnings
+- Document learnings in implementation log
 ```
 
 ### Major Refactoring
@@ -224,54 +234,60 @@ Phase 1: Analysis
 
 Phase 2: Planning
 - zen-mcp-master: planner (step-by-step refactor plan)
-- Review plan with zen-mcp-master: plan-reviewer
+- Review plan with zen-mcp-master: consensus (if multiple approaches)
 
 Phase 3: Execution
 - Claude Code performs refactoring
+- flutter-agent: run build_runner watch mode
 - zen-mcp-master: codereview (validate each step)
 
 Phase 4: Validation
-- zen-mcp-master: testgen (ensure coverage)
-- Run full test suite
+- zen-mcp-master: testgen (ensure widget/unit test coverage)
+- flutter-agent: run full test suite
+- flutter-agent: test on multiple platforms
 
-Phase 5: Deployment
+Phase 5: Build & Merge
 - zen-mcp-master: precommit (comprehensive check)
-- cloudflare-agent: gradual deployment with rollback ready
+- flutter-agent: code generation + build all platforms
+- flutter-agent: deploy web to Firebase staging
 ```
 
 ---
 
 ## Context Sharing Between Agents
 
-### cloudflare-agent → zen-mcp-master
-When deployment reveals code issues:
+### flutter-agent → zen-mcp-master
+When builds/tests reveal code issues:
 ```
 Context to share:
-- Error logs and stack traces
-- Affected endpoints and request patterns
-- Performance metrics (latency, error rate)
-- KV cache behavior
-- Deployment ID and timestamp
+- Build errors and stack traces
+- Test failures with reproduction steps
+- Platform-specific issues (iOS/Android/Web)
+- Code generation errors
+- Dependency conflicts
+- Firebase deployment errors
 
 zen-mcp-master uses this for:
 - debug (root cause analysis)
 - codereview (validate fix)
 - thinkdeep (systemic issues)
+- analyze (dependency resolution)
 ```
 
-### zen-mcp-master → cloudflare-agent
+### zen-mcp-master → flutter-agent
 When code review/audit completes:
 ```
 Context to share:
-- Files changed
-- Security considerations
-- Performance implications
-- Monitoring focus areas (new endpoints, cache keys)
+- Files changed (especially Riverpod providers, Drift tables)
+- Security considerations (Firebase rules, API keys)
+- Performance implications (widget rebuilds, database queries)
+- Code generation required (new @riverpod annotations)
 
-cloudflare-agent uses this for:
-- Tailored health checks
-- Specific metric monitoring
-- Rollback triggers
+flutter-agent uses this for:
+- Run code generation if needed
+- Build with appropriate platforms
+- Test focus areas
+- Deploy with validated changes
 ```
 
 ---
@@ -280,22 +296,23 @@ cloudflare-agent uses this for:
 
 ### Always Escalate
 - Security vulnerabilities rated Critical/High
-- Architectural changes affecting multiple services
-- Cost implications > $100/month
-- Data migration or schema changes
-- Breaking API changes
+- Architectural changes affecting multiple features
+- Breaking changes to Drift schema (data migration)
+- Firebase security rules changes
+- App Store/Play Store submissions
+- Signing certificate issues
 
 ### Sometimes Escalate
 - Non-critical bugs with multiple fix approaches
-- Performance optimization trade-offs
+- Performance optimization trade-offs (widget rebuild strategies)
 - Refactoring with unclear ROI
-- Deployment during peak hours
+- Major dependency version upgrades
 
 ### Rarely Escalate
 - Bug fixes with clear root cause
-- Code style/formatting issues
+- Code style/formatting issues (dart format)
 - Documentation updates
-- Config changes (TTL, rate limits)
+- Minor dependency updates
 
 ---
 
@@ -352,26 +369,26 @@ For repeated similar requests:
 
 ## Agent Selection Heuristics
 
-### Keywords → cloudflare-agent
-- deploy, rollback, wrangler
-- logs, tail, monitoring
-- KV, Durable Object
-- production, live, runtime
-- metrics, analytics, performance
-- cold start, latency
+### Keywords → flutter-agent
+- build, deploy, run, test
+- Flutter, Dart, Android, iOS, Web
+- pub get, dependencies, packages
+- code generation, build_runner
+- Firebase deploy, hosting
+- hot reload, profile, analyze
 
 ### Keywords → zen-mcp-master
 - review, audit, analyze
-- security, vulnerability, OWASP
+- security, vulnerability, Firebase rules
 - debug, investigate, trace
 - refactor, optimize, improve
-- test, coverage, generate
+- test coverage, generate tests
 - architecture, design, patterns
 
 ### Keywords → Both (in sequence)
-- "deploy safely" → review then deploy
-- "fix and deploy" → debug, validate, deploy
-- "optimize and monitor" → refactor, deploy, analyze metrics
+- "review and build" → review then build
+- "fix and deploy" → debug, validate, build, deploy
+- "optimize and test" → refactor, codereview, test, build
 
 ---
 
@@ -384,10 +401,10 @@ For repeated similar requests:
 - Refine decision trees based on results
 
 ### Adapt to Project
-- Learn BooksTrack-specific patterns over time
-- Understand common failure modes
-- Recognize performance bottlenecks
-- Build domain knowledge (Google Books API, ISBNdb quirks)
+- Learn BooksTrack Flutter patterns over time
+- Understand common failure modes (code generation, platform-specific)
+- Recognize performance bottlenecks (widget rebuilds, Drift queries)
+- Build domain knowledge (Riverpod patterns, Firebase integration, multi-platform quirks)
 
 ---
 
@@ -395,46 +412,48 @@ For repeated similar requests:
 
 ### Delegation Syntax (Conceptual)
 ```
-User: "Deploy to production and watch for errors"
+User: "Build for Android and iOS"
 
 Project Manager analyzes:
-- Primary action: Deploy
-- Secondary action: Monitor
-- Risk level: Medium (production)
-- Complexity: Low
+- Primary action: Build
+- Platforms: Android, iOS
+- Code generation: Required (Riverpod/Drift)
+- Complexity: Medium
 
-Delegates to: cloudflare-agent
+Delegates to: flutter-agent
 Instructions:
-  - Execute deployment with health checks
-  - Monitor for 5 minutes
-  - Report error rates and latency
-  - Auto-rollback if error rate > 1%
+  - Run code generation first
+  - Build APK/App Bundle for Android
+  - Build for iOS (requires macOS)
+  - Report any platform-specific issues
+  - Skip macOS if gRPC error detected
 ```
 
 ### Multi-Agent Coordination (Conceptual)
 ```
-User: "Review and deploy the new rate limiting feature"
+User: "Review and build for release"
 
 Project Manager analyzes:
-- Phase 1: Code review (zen-mcp-master)
-- Phase 2: Security audit (zen-mcp-master)
-- Phase 3: Deployment (cloudflare-agent)
+- Phase 1: Pre-commit validation (zen-mcp-master)
+- Phase 2: Code review (zen-mcp-master)
+- Phase 3: Build (flutter-agent)
 
 Workflow:
-1. zen-mcp-master: codereview
+1. zen-mcp-master: precommit
    - Model: gemini-2.5-pro
-   - Focus: rate limiting logic, edge cases
+   - Validate git changes
+   - Check for security issues
+
+2. zen-mcp-master: codereview
+   - Model: gemini-2.5-pro
+   - Focus: Flutter/Dart best practices
    - Validation: external
 
-2. zen-mcp-master: secaudit
-   - Model: gemini-2.5-pro
-   - Focus: DoS prevention, bypass attempts
-   - Threat level: high
-
-3. cloudflare-agent: deploy
-   - Health checks: rate limit endpoints
-   - Monitor: track rate limit hits
-   - Rollback: if legitimate requests blocked
+3. flutter-agent: build
+   - Code generation first
+   - Build all platforms (Android, iOS, Web)
+   - Deploy web to Firebase
+   - Escalate app store submissions
 ```
 
 ---
@@ -469,5 +488,6 @@ Workflow:
 ---
 
 **Autonomy Level:** High - Can delegate and coordinate without human approval for standard workflows
-**Human Escalation:** Required for critical security issues, architectural changes, and high-risk deployments
+**Human Escalation:** Required for critical security issues, architectural changes, app store submissions, and Firebase security rules
 **Primary Interface:** Claude Code conversations
+**Platform:** Flutter multi-platform (iOS, Android, Web, macOS*) with Riverpod + Drift + Firebase
