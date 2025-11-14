@@ -1,0 +1,193 @@
+{
+  "name": "flutter-build-agent",
+  "description": "Specialized agent for Flutter build, test, deploy, and code generation workflows",
+  "version": "1.0.0",
+  "type": "autonomous",
+  "capabilities": [
+    "code-generation",
+    "build-management",
+    "test-execution",
+    "deployment",
+    "package-management",
+    "performance-profiling"
+  ],
+  "triggers": {
+    "keywords": [
+      "build",
+      "deploy",
+      "test",
+      "run",
+      "flutter",
+      "dart",
+      "pub get",
+      "build_runner",
+      "firebase deploy",
+      "hot reload",
+      "analyze"
+    ],
+    "file_patterns": [
+      "pubspec.yaml",
+      "**/*.dart",
+      "**/build_runner.yaml",
+      "firebase.json"
+    ],
+    "commands": [
+      "flutter build",
+      "flutter run",
+      "flutter test",
+      "dart run build_runner",
+      "firebase deploy"
+    ]
+  },
+  "tools": [
+    {
+      "name": "build_runner",
+      "command": "dart run build_runner build --delete-conflicting-outputs",
+      "description": "Generate Riverpod providers and Drift database code",
+      "required_before": ["build", "test"],
+      "watch_mode": "dart run build_runner watch --delete-conflicting-outputs"
+    },
+    {
+      "name": "flutter_analyze",
+      "command": "flutter analyze",
+      "description": "Run Dart analyzer on all files",
+      "required_before": ["commit", "build"]
+    },
+    {
+      "name": "flutter_test",
+      "command": "flutter test",
+      "description": "Run unit and widget tests",
+      "with_coverage": "flutter test --coverage"
+    },
+    {
+      "name": "flutter_build_android",
+      "command": "flutter build apk --release",
+      "description": "Build Android APK release",
+      "app_bundle": "flutter build appbundle --release"
+    },
+    {
+      "name": "flutter_build_ios",
+      "command": "flutter build ios --release",
+      "description": "Build iOS release (requires macOS)",
+      "platform_requirement": "macOS"
+    },
+    {
+      "name": "flutter_build_web",
+      "command": "flutter build web --release",
+      "description": "Build Web release",
+      "renderer_options": ["canvaskit", "html"]
+    },
+    {
+      "name": "firebase_deploy",
+      "command": "firebase deploy --only hosting",
+      "description": "Deploy Flutter web to Firebase Hosting",
+      "required_after": ["flutter_build_web"]
+    }
+  ],
+  "workflows": {
+    "pre_commit": {
+      "steps": [
+        "dart run build_runner build --delete-conflicting-outputs",
+        "dart format .",
+        "flutter analyze",
+        "flutter test"
+      ],
+      "delegate_to": "zen-mcp-master",
+      "tool": "precommit"
+    },
+    "release_build": {
+      "steps": [
+        "flutter pub get",
+        "dart run build_runner build --delete-conflicting-outputs",
+        "flutter test",
+        "flutter build apk --release",
+        "flutter build appbundle --release",
+        "flutter build ios --release",
+        "flutter build web --release"
+      ],
+      "skip_on_error": ["flutter build macos"],
+      "known_issues": {
+        "macos_grpc": "gRPC incompatibility with macOS 26.1 Sequoia"
+      }
+    },
+    "development": {
+      "steps": [
+        "dart run build_runner watch --delete-conflicting-outputs",
+        "flutter run -d <device> --hot"
+      ]
+    }
+  },
+  "delegations": {
+    "code_review": {
+      "agent": "zen-mcp-master",
+      "tool": "codereview",
+      "when": "after significant changes",
+      "model": "gemini-2.5-pro"
+    },
+    "security_audit": {
+      "agent": "zen-mcp-master",
+      "tool": "secaudit",
+      "when": "Firebase rules or auth changes",
+      "model": "gemini-2.5-pro"
+    },
+    "debug": {
+      "agent": "zen-mcp-master",
+      "tool": "debug",
+      "when": "complex build or runtime errors",
+      "model": "gemini-2.5-pro"
+    },
+    "test_generation": {
+      "agent": "zen-mcp-master",
+      "tool": "testgen",
+      "when": "new features without tests",
+      "model": "grokcode"
+    }
+  },
+  "escalations": {
+    "to_human": [
+      "App Store submissions",
+      "Play Store submissions",
+      "Signing certificate issues",
+      "Firebase project configuration",
+      "Breaking dependency changes"
+    ]
+  },
+  "error_handling": {
+    "code_generation_conflict": {
+      "solution": "Run with --delete-conflicting-outputs flag",
+      "command": "dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs"
+    },
+    "macos_build_failure": {
+      "error_pattern": "clang: error: unsupported option '-G'",
+      "solution": "Skip macOS builds (known gRPC issue)",
+      "workaround": "Test on iOS/Android/Web instead"
+    },
+    "dependency_conflict": {
+      "investigation": "flutter pub deps",
+      "delegate_to": "zen-mcp-master",
+      "tool": "analyze"
+    }
+  },
+  "platform_requirements": {
+    "ios": {
+      "os": "macOS",
+      "xcode_version": "15.0+",
+      "ios_sdk": "26.1"
+    },
+    "android": {
+      "java_version": "17"
+    },
+    "web": {
+      "firebase_cli": "required for deployment"
+    }
+  },
+  "best_practices": {
+    "always_run_first": "dart run build_runner build",
+    "before_build": ["code generation", "analyze", "tests"],
+    "multi_platform_order": ["Android", "iOS", "Web", "skip macOS"],
+    "development_mode": "Keep build_runner watch running"
+  },
+  "autonomy_level": "high",
+  "requires_approval": false,
+  "skill_reference": ".claude/skills/flutter-agent/skill.md"
+}

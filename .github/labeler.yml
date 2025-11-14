@@ -1,0 +1,188 @@
+# Auto-labeler configuration for GitHub PRs
+# Automatically applies labels based on changed files
+
+# Priority Labels (auto-assigned based on file count/type)
+'P0: Critical':
+  - any:
+    - 'lib/core/database/**/*'
+    - 'lib/core/services/api_client.dart'
+    - '**/firebase.json'
+    - '**/firestore.rules'
+    - '**/storage.rules'
+
+'P1: High':
+  - any:
+    - 'lib/core/**/*'
+    - 'lib/features/**/*'
+    - 'pubspec.yaml'
+
+# Type Labels
+'type: feature':
+  - any:
+    - 'lib/features/**/*'
+    - 'test/**/*_test.dart'
+
+'type: bug':
+  - any:
+    - changed-files:
+      - any-glob-to-any-file: '**/*'
+      - all-globs-to-any-file: ['!lib/features/**/*', '!test/**/*']
+
+'type: docs':
+  - any:
+    - '**/*.md'
+    - 'docs/**/*'
+    - 'product/**/*.md'
+    - '.claude/**/*.md'
+
+'type: test':
+  - any:
+    - 'test/**/*'
+    - 'integration_test/**/*'
+
+'type: refactor':
+  - any:
+    - 'lib/**/*.dart'
+    - '!lib/features/**/*'
+
+'type: perf':
+  - any:
+    - 'lib/core/database/**/*'
+    - 'lib/shared/widgets/**/*'
+
+'type: security':
+  - any:
+    - '**/firestore.rules'
+    - '**/storage.rules'
+    - 'lib/core/services/api_client.dart'
+    - '**/firebase.json'
+
+# Phase Labels
+'phase: 1-foundation':
+  - any:
+    - 'lib/core/**/*'
+    - 'lib/features/library/**/*'
+    - 'lib/shared/**/*'
+
+'phase: 2-search':
+  - any:
+    - 'lib/features/search/**/*'
+    - 'lib/core/services/api_client.dart'
+
+'phase: 3-scanner':
+  - any:
+    - 'lib/features/scanner/**/*'
+    - 'lib/core/services/gemini_service.dart'
+
+'phase: 4-insights':
+  - any:
+    - 'lib/features/insights/**/*'
+    - 'lib/core/services/analytics_service.dart'
+
+'phase: 5-polish':
+  - any:
+    - 'lib/shared/theme/**/*'
+    - 'lib/shared/widgets/**/*'
+    - 'test/**/*'
+    - 'integration_test/**/*'
+
+# Platform Labels
+'platform: android':
+  - any:
+    - 'android/**/*'
+    - '**/AndroidManifest.xml'
+    - '**/build.gradle'
+
+'platform: ios':
+  - any:
+    - 'ios/**/*'
+    - '**/Info.plist'
+    - '**/Podfile'
+
+'platform: web':
+  - any:
+    - 'web/**/*'
+    - '**/index.html'
+
+'platform: macos':
+  - any:
+    - 'macos/**/*'
+
+'platform: all':
+  - any:
+    - 'lib/**/*.dart'
+    - 'pubspec.yaml'
+
+# Component Labels
+'component: database':
+  - any:
+    - 'lib/core/database/**/*'
+
+'component: ui':
+  - any:
+    - 'lib/shared/widgets/**/*'
+    - 'lib/features/**/screens/**/*'
+    - 'lib/features/**/widgets/**/*'
+
+'component: api':
+  - any:
+    - 'lib/core/services/api_client.dart'
+    - 'lib/core/models/dtos/**/*'
+    - 'lib/core/services/dto_mapper.dart'
+
+'component: auth':
+  - any:
+    - 'lib/core/services/auth_service.dart'
+    - '**/firebase.json'
+
+'component: scanner':
+  - any:
+    - 'lib/features/scanner/**/*'
+    - 'lib/core/services/gemini_service.dart'
+
+'component: firebase':
+  - any:
+    - '**/firebase.json'
+    - '**/firestore.rules'
+    - '**/storage.rules'
+    - 'lib/core/services/firebase_*.dart'
+
+'component: routing':
+  - any:
+    - 'lib/core/router/**/*'
+
+'component: state':
+  - any:
+    - 'lib/**/providers/**/*'
+    - 'lib/core/providers/**/*'
+
+# Effort Labels (based on file count changes)
+'effort: XS (< 2h)':
+  - changed-files:
+    - 1-3
+
+'effort: S (2-4h)':
+  - changed-files:
+    - 4-10
+
+'effort: M (4-8h)':
+  - changed-files:
+    - 11-25
+
+'effort: L (1-2d)':
+  - changed-files:
+    - 26-50
+
+'effort: XL (3-5d)':
+  - changed-files:
+    - 51-999
+
+# Status Labels
+'status: needs-review':
+  - any:
+    - '**/*'
+
+# GitHub Copilot special labels
+'copilot-reviewed':
+  - head-branch:
+    - 'copilot/*'

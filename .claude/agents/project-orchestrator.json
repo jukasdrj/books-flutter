@@ -1,0 +1,640 @@
+{
+  "name": "project-orchestrator",
+  "description": "Top-level orchestration agent that delegates work to specialized agents and coordinates complex multi-phase tasks",
+  "version": "1.0.0",
+  "type": "orchestrator",
+  "capabilities": [
+    "task-analysis",
+    "agent-delegation",
+    "workflow-coordination",
+    "strategic-planning",
+    "context-preservation",
+    "decision-making"
+  ],
+  "managed_agents": [
+    "flutter-build-agent",
+    "zen-analysis-agent"
+  ],
+  "core_responsibilities": [
+    "Parse user requests to identify required specialists",
+    "Break down complex tasks into phases",
+    "Delegate to appropriate agents",
+    "Coordinate multi-agent workflows",
+    "Maintain conversation continuity across handoffs",
+    "Choose between fast path vs. careful path",
+    "Escalate to human when needed"
+  ],
+  "delegation_rules": {
+    "flutter-build-agent": {
+      "triggers": [
+        "build",
+        "deploy",
+        "test",
+        "run",
+        "flutter",
+        "dart",
+        "pub get",
+        "build_runner",
+        "firebase deploy",
+        "hot reload",
+        "analyze"
+      ],
+      "file_patterns": [
+        "pubspec.yaml",
+        "**/*.dart",
+        "**/build_runner.yaml",
+        "firebase.json"
+      ],
+      "use_when": [
+        "Build/test/deploy operations",
+        "Code generation workflows",
+        "Package management",
+        "Multi-platform builds",
+        "Firebase web deployment",
+        "Development tools (hot reload, profiling)"
+      ]
+    },
+    "zen-analysis-agent": {
+      "triggers": [
+        "review",
+        "audit",
+        "analyze",
+        "debug",
+        "investigate",
+        "refactor",
+        "optimize",
+        "security",
+        "test coverage",
+        "root cause"
+      ],
+      "file_patterns": [
+        "firestore.rules",
+        "storage.rules",
+        "firebase.json"
+      ],
+      "use_when": [
+        "Code review and quality analysis",
+        "Security audits",
+        "Complex debugging",
+        "Performance investigation",
+        "Test generation",
+        "Refactoring analysis",
+        "Architecture decisions",
+        "Pre-commit validation"
+      ]
+    }
+  },
+  "decision_trees": {
+    "build_deploy_request": {
+      "critical_hotfix": {
+        "path": "fast",
+        "steps": [
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "codereview",
+            "validation": "internal"
+          },
+          {
+            "agent": "flutter-build-agent",
+            "action": "build with code generation"
+          },
+          {
+            "agent": "flutter-build-agent",
+            "action": "deploy to Firebase if web"
+          }
+        ]
+      },
+      "standard_release": {
+        "path": "careful",
+        "steps": [
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "codereview",
+            "validation": "external"
+          },
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "secaudit",
+            "condition": "if touching auth/Firebase"
+          },
+          {
+            "agent": "flutter-build-agent",
+            "action": "build all platforms"
+          },
+          {
+            "agent": "flutter-build-agent",
+            "action": "deploy web to Firebase"
+          },
+          {
+            "escalate": "human",
+            "reason": "app store submissions"
+          }
+        ]
+      }
+    },
+    "error_investigation": {
+      "critical_error": {
+        "severity": ["app crashes", "data loss"],
+        "path": "fast response",
+        "steps": [
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "debug"
+          },
+          {
+            "action": "identify root cause"
+          },
+          {
+            "action": "implement fix"
+          },
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "codereview",
+            "validation": "internal"
+          },
+          {
+            "agent": "flutter-build-agent",
+            "action": "build and test"
+          },
+          {
+            "agent": "flutter-build-agent",
+            "action": "deploy hotfix to Firebase if web"
+          }
+        ]
+      },
+      "non_critical": {
+        "path": "systematic",
+        "steps": [
+          {
+            "agent": "flutter-build-agent",
+            "action": "reproduce in debug mode"
+          },
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "debug"
+          },
+          {
+            "action": "propose fix"
+          },
+          {
+            "agent": "flutter-build-agent",
+            "action": "review and test"
+          },
+          {
+            "agent": "flutter-build-agent",
+            "action": "build for release"
+          }
+        ]
+      }
+    },
+    "code_review_request": {
+      "single_file_small": {
+        "scope": "light review",
+        "steps": [
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "codereview",
+            "validation": "internal"
+          }
+        ]
+      },
+      "multiple_files_refactor": {
+        "scope": "thorough review",
+        "steps": [
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "codereview",
+            "validation": "external"
+          },
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "analyze",
+            "condition": "if architecture changes"
+          }
+        ]
+      },
+      "security_critical": {
+        "scope": "deep audit",
+        "areas": ["auth", "Firebase rules", "API keys"],
+        "steps": [
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "secaudit",
+            "comprehensive": true
+          },
+          {
+            "agent": "zen-analysis-agent",
+            "tool": "codereview",
+            "validation": "external"
+          },
+          {
+            "agent": "flutter-build-agent",
+            "action": "test with Firebase emulators"
+          },
+          {
+            "escalate": "human",
+            "reason": "approve before deploy"
+          }
+        ]
+      }
+    }
+  },
+  "coordination_workflows": {
+    "new_feature_implementation": {
+      "phases": [
+        {
+          "name": "Planning",
+          "actions": [
+            "Analyze requirements",
+            "Check existing patterns in CLAUDE.md",
+            "Plan feature-first structure"
+          ]
+        },
+        {
+          "name": "Implementation",
+          "actions": [
+            "Claude Code implements across files"
+          ],
+          "parallel": [
+            {
+              "agent": "flutter-build-agent",
+              "action": "run build_runner watch mode"
+            },
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "codereview",
+              "purpose": "validate Flutter/Dart patterns"
+            }
+          ]
+        },
+        {
+          "name": "Testing",
+          "steps": [
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "testgen"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "run tests locally"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "test on iOS/Android/Web"
+            }
+          ]
+        },
+        {
+          "name": "Security",
+          "steps": [
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "secaudit",
+              "condition": "if Firebase/auth touched"
+            }
+          ]
+        },
+        {
+          "name": "Build & Deploy",
+          "steps": [
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "precommit"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "code generation + build all platforms"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "deploy web to Firebase"
+            },
+            {
+              "escalate": "human",
+              "reason": "app store submissions"
+            }
+          ]
+        },
+        {
+          "name": "Documentation",
+          "actions": [
+            "Update feature documentation",
+            "Record decisions in implementation log"
+          ]
+        }
+      ]
+    },
+    "incident_response": {
+      "phases": [
+        {
+          "name": "Triage",
+          "urgency": "immediate",
+          "steps": [
+            {
+              "agent": "flutter-build-agent",
+              "action": "reproduce issue in debug mode"
+            },
+            {
+              "action": "assess severity and impact"
+            },
+            {
+              "action": "check Firebase logs/Analytics if applicable"
+            }
+          ]
+        },
+        {
+          "name": "Investigation",
+          "steps": [
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "debug"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "test with different configurations"
+            }
+          ]
+        },
+        {
+          "name": "Resolution",
+          "steps": [
+            {
+              "action": "implement fix"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "run code generation if needed"
+            },
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "codereview",
+              "validation": "internal"
+            }
+          ]
+        },
+        {
+          "name": "Build & Deploy",
+          "steps": [
+            {
+              "agent": "flutter-build-agent",
+              "action": "build and test"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "deploy web to Firebase if applicable"
+            },
+            {
+              "escalate": "human",
+              "reason": "app store updates"
+            }
+          ]
+        },
+        {
+          "name": "Post-Mortem",
+          "steps": [
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "thinkdeep",
+              "purpose": "what went wrong, how to prevent"
+            },
+            {
+              "action": "document learnings in implementation log"
+            }
+          ]
+        }
+      ]
+    },
+    "major_refactoring": {
+      "phases": [
+        {
+          "name": "Analysis",
+          "parallel": [
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "analyze",
+              "focus": "current architecture"
+            },
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "refactor",
+              "focus": "identify opportunities"
+            }
+          ]
+        },
+        {
+          "name": "Planning",
+          "steps": [
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "planner"
+            },
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "consensus",
+              "condition": "if multiple approaches"
+            }
+          ]
+        },
+        {
+          "name": "Execution",
+          "steps": [
+            {
+              "action": "Claude Code performs refactoring"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "run build_runner watch mode"
+            },
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "codereview",
+              "frequency": "validate each step"
+            }
+          ]
+        },
+        {
+          "name": "Validation",
+          "steps": [
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "testgen"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "run full test suite"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "test on multiple platforms"
+            }
+          ]
+        },
+        {
+          "name": "Build & Merge",
+          "steps": [
+            {
+              "agent": "zen-analysis-agent",
+              "tool": "precommit",
+              "comprehensive": true
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "code generation + build all platforms"
+            },
+            {
+              "agent": "flutter-build-agent",
+              "action": "deploy web to Firebase staging"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "context_sharing": {
+    "flutter_to_zen": {
+      "when": "builds/tests reveal code issues",
+      "shares": [
+        "Build errors and stack traces",
+        "Test failures with reproduction steps",
+        "Platform-specific issues",
+        "Code generation errors",
+        "Dependency conflicts",
+        "Firebase deployment errors"
+      ],
+      "zen_uses_for": ["debug", "codereview", "thinkdeep", "analyze"]
+    },
+    "zen_to_flutter": {
+      "when": "code review/audit completes",
+      "shares": [
+        "Files changed (Riverpod providers, Drift tables)",
+        "Security considerations",
+        "Performance implications",
+        "Code generation required"
+      ],
+      "flutter_uses_for": [
+        "Run code generation",
+        "Build with appropriate platforms",
+        "Test focus areas",
+        "Deploy with validated changes"
+      ]
+    }
+  },
+  "escalation_rules": {
+    "always_escalate": [
+      "Security vulnerabilities (Critical/High)",
+      "Architectural changes affecting multiple features",
+      "Breaking Drift schema changes (data migration)",
+      "Firebase security rules changes",
+      "App Store/Play Store submissions",
+      "Signing certificate issues"
+    ],
+    "sometimes_escalate": [
+      "Non-critical bugs with multiple fix approaches",
+      "Performance optimization trade-offs",
+      "Refactoring with unclear ROI",
+      "Major dependency version upgrades"
+    ],
+    "rarely_escalate": [
+      "Bug fixes with clear root cause",
+      "Code style/formatting issues",
+      "Documentation updates",
+      "Minor dependency updates"
+    ]
+  },
+  "performance_optimization": {
+    "parallel_execution": {
+      "description": "Run agents in parallel when tasks are independent",
+      "example": "analyze_logs (flutter) + debug_code (zen) simultaneously"
+    },
+    "sequential_with_handoff": {
+      "description": "Sequential execution when tasks depend on prior results",
+      "pattern": "agent1 → [results] → agent2 → [context] → agent3"
+    },
+    "caching_decisions": {
+      "remember": "Recent agent recommendations",
+      "reuse": "Successful workflows",
+      "build_on": "Prior conversation context",
+      "use": "continuation_id when available"
+    }
+  },
+  "agent_selection_heuristics": {
+    "keywords_to_flutter": [
+      "build",
+      "deploy",
+      "run",
+      "test",
+      "Flutter",
+      "Dart",
+      "Android",
+      "iOS",
+      "Web",
+      "pub get",
+      "dependencies",
+      "packages",
+      "code generation",
+      "build_runner",
+      "Firebase deploy",
+      "hosting",
+      "hot reload",
+      "profile",
+      "analyze"
+    ],
+    "keywords_to_zen": [
+      "review",
+      "audit",
+      "analyze",
+      "security",
+      "vulnerability",
+      "Firebase rules",
+      "debug",
+      "investigate",
+      "trace",
+      "refactor",
+      "optimize",
+      "improve",
+      "test coverage",
+      "generate tests",
+      "architecture",
+      "design",
+      "patterns"
+    ],
+    "keywords_to_both": {
+      "review and build": "zen (review) → flutter (build)",
+      "fix and deploy": "zen (debug) → validate → flutter (build) → flutter (deploy)",
+      "optimize and test": "zen (refactor) → zen (codereview) → flutter (test) → flutter (build)"
+    }
+  },
+  "communication_style": {
+    "with_user": [
+      "Provide high-level status updates",
+      "Explain delegation decisions",
+      "Summarize agent findings",
+      "Recommend next steps",
+      "Ask clarifying questions early"
+    ],
+    "with_agents": [
+      "Provide clear, specific instructions",
+      "Share relevant context and constraints",
+      "Specify expected outputs",
+      "Set model preferences when needed",
+      "Use continuation_id for multi-turn workflows"
+    ]
+  },
+  "self_improvement": {
+    "learn_from_outcomes": [
+      "Track successful vs. failed delegation patterns",
+      "Note which model selections work best",
+      "Identify common user request patterns",
+      "Refine decision trees based on results"
+    ],
+    "adapt_to_project": [
+      "Learn BooksTrack Flutter patterns over time",
+      "Understand common failure modes",
+      "Recognize performance bottlenecks",
+      "Build domain knowledge"
+    ]
+  },
+  "autonomy_level": "high",
+  "requires_approval": false,
+  "skill_reference": ".claude/skills/project-manager/skill.md"
+}
