@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **BooksTrack Flutter** is a cross-platform book tracking application converted from iOS. The app features AI-powered bookshelf scanning using Gemini 2.0 Flash, multi-mode search, and reading analytics with diversity insights.
 
-**Current Status:** Phase 1 (Foundation) - 95% Complete (as of Nov 12, 2025)
+**Current Status:** Phase 1 (Foundation) - 100% Complete (as of Nov 13, 2025)
 
 **Key Differentiator:** Platform-agnostic Cloudflare Workers backend means zero API changes during iOS → Flutter conversion.
 
@@ -97,38 +97,170 @@ flutter doctor
 flutter analyze
 ```
 
+## Claude Code Agent Setup
+
+**Added:** November 14-15, 2025
+
+This repository includes specialized Claude Code agents for enhanced AI collaboration.
+
+### Available Agents
+
+Use the `/skill` command to invoke specialized agents:
+
+**Universal Agents (Synced from Backend):**
+- `/skill project-manager` - Orchestration and task delegation
+- `/skill zen-mcp-master` - Deep analysis using 14 Zen MCP tools
+
+**Flutter-Specific Agents (TODO):**
+- `/skill flutter-agent` - Flutter build, test, and deployment (planned)
+
+### Agent Directory Structure
+
+```
+.claude/
+├── README.md                    # Agent setup guide
+├── ROBIT_OPTIMIZATION.md        # Complete agent architecture
+├── ROBIT_SHARING_FRAMEWORK.md   # Cross-repo agent sharing
+├── agents/                      # Agent configurations (JSON)
+│   ├── project-orchestrator.json
+│   ├── flutter-build-agent.json
+│   └── zen-analysis-agent.json
+├── hooks/                       # Git-like hooks
+│   ├── pre-commit.sh           # Pre-commit validation
+│   └── post-tool-use.sh        # Post-tool suggestions
+├── prompts/                     # Reusable prompts
+│   ├── plan-feature.md
+│   ├── debug-issue.md
+│   └── code-review.md
+├── skills/                      # Skill definitions
+│   ├── project-manager/
+│   ├── flutter-agent/
+│   └── zen-mcp-master/
+└── mcp_config.json             # MCP server configuration
+```
+
+### When to Use Agents
+
+- **Complex Workflows:** Use `/skill project-manager` for multi-step tasks
+- **Code Analysis/Review:** Use `/skill zen-mcp-master` for deep debugging
+- **Flutter Operations:** Use `/skill flutter-agent` for builds/tests (when implemented)
+
+### GitHub Infrastructure
+
+**Labels System:** 48 labels across 7 categories
+- Priority: P0-P3
+- Type: bug, feature, enhancement, docs, perf, refactor, security, test
+- Phase: 1-foundation through 6-launch
+- Platform: android, ios, macos, web, all
+- Component: database, ui, api, auth, scanner, firebase, routing, state
+- Status: blocked, in-progress, needs-review, needs-testing, ready
+- Effort: XS (<2h), S (2-4h), M (4-8h), L (1-2d), XL (3-5d)
+
+See `.github/LABELS.md` for full reference.
+
+**Workflows:**
+- `.github/workflows/ci.yml` - Continuous Integration
+- `.github/workflows/copilot-review.yml` - GitHub Copilot PR reviews
+- `.github/workflows/deploy-cloudflare.yml` - Backend deployment
+
+**Issue Templates:**
+- `.github/ISSUE_TEMPLATE/bug.yml` - Bug reports
+- `.github/ISSUE_TEMPLATE/feature.yml` - Feature requests
+
 ## Architecture Overview
 
-### Feature-First Structure
+### Modern Clean Architecture Structure
+**Reorganized:** November 13, 2025 to industry best practices
+
 ```
 lib/
-├── core/                    # Shared infrastructure
-│   ├── database/           # Drift schema & queries
-│   ├── models/dtos/        # API data transfer objects (Freezed)
-│   ├── providers/          # Global Riverpod providers
-│   ├── router/             # GoRouter configuration
-│   └── services/           # API client, Firebase, DTOMapper
-├── features/               # Feature modules
-│   ├── library/            # Book collection management
-│   ├── search/             # Multi-mode search (placeholder)
-│   ├── scanner/            # AI bookshelf scanner (placeholder)
-│   └── insights/           # Reading analytics (placeholder)
-├── shared/                 # Reusable components
-│   ├── widgets/            # BookCard, BookGridCard, MainScaffold
-│   ├── theme/              # Material 3 theme configuration
-│   ├── providers/          # (future)
-│   └── utils/              # (future)
-└── main.dart               # App entry point
+├── main.dart               # App entry point (15 lines - simplified)
+│
+├── app/                    # App-level configuration
+│   ├── app.dart           # MyApp widget
+│   ├── router.dart        # GoRouter configuration
+│   └── theme.dart         # Material 3 theme
+│
+├── core/                   # Shared infrastructure
+│   ├── data/              # Data layer (Clean Architecture)
+│   │   ├── database/      # Drift schema & queries
+│   │   ├── models/dtos/   # API data transfer objects (Freezed)
+│   │   └── repositories/  # (Future) Repository pattern
+│   │
+│   ├── domain/            # Domain layer (Business logic)
+│   │   ├── entities/      # (Future) Domain entities
+│   │   ├── usecases/      # (Future) Use cases
+│   │   └── failures/      # (Future) Domain failures
+│   │
+│   ├── services/          # Infrastructure services
+│   │   ├── api/          # API client, SearchService
+│   │   ├── auth/         # Firebase Auth service
+│   │   ├── sync/         # Cloud sync service
+│   │   └── storage/      # (Future) Storage service
+│   │
+│   ├── models/           # Cross-cutting models
+│   │   └── exceptions/   # ApiException, custom exceptions
+│   │
+│   └── providers/        # Global Riverpod providers
+│
+├── features/             # Feature modules (Clean Architecture)
+│   ├── library/          # Book collection management
+│   │   ├── domain/       # Business logic
+│   │   │   └── providers/
+│   │   ├── presentation/ # UI layer
+│   │   │   ├── screens/
+│   │   │   └── widgets/
+│   │   └── library.dart  # Barrel export
+│   │
+│   ├── search/           # Multi-mode search
+│   │   ├── domain/
+│   │   └── presentation/
+│   │       └── screens/
+│   │
+│   ├── scanner/          # Barcode scanner
+│   │   └── presentation/
+│   │       └── screens/
+│   │
+│   ├── bookshelf_scanner/ # AI bookshelf scanner
+│   ├── review_queue/     # Review queue for AI detections
+│   └── insights/         # Reading analytics
+│       └── presentation/
+│           └── screens/
+│
+└── shared/               # Reusable components
+    └── widgets/
+        ├── cards/        # BookCard, BookGridCard
+        ├── layouts/      # MainScaffold, etc.
+        ├── buttons/      # (Future)
+        ├── loading/      # (Future)
+        └── dialogs/      # (Future)
 ```
+
+**Key Changes (Nov 13, 2025):**
+- ✅ Extracted app configuration to `lib/app/` directory
+- ✅ Split core into `data/` and `domain/` layers (Clean Architecture)
+- ✅ Organized services by type: `api/`, `auth/`, `sync/`, `storage/`
+- ✅ Features now use `domain/` and `presentation/` separation
+- ✅ Barrel exports added for each feature (e.g., `library.dart`)
+- ✅ Shared widgets categorized by type
+- ✅ main.dart simplified from ~150 lines to 15 lines
+
+**Benefits:**
+- Scalability - Add features without touching existing code
+- Testability - Clear boundaries make testing easy
+- Maintainability - Everything has a proper home
+- Team Collaboration - Reduced merge conflicts
+- Industry Standard - Follows 2025 best practices
 
 ### Critical Patterns
 
 #### 1. Database Layer (Drift)
-- **Schema Version:** 4 (see database.dart:260)
+- **Schema Version:** 4 (see `lib/core/data/database/database.dart:260`)
 - **Tables:** Works, Editions, Authors, WorkAuthors (junction), UserLibraryEntries, ScanSessions, DetectedItems
 - **Key Principle:** All queries return reactive `Stream<T>` via `.watch()`
 - **N+1 Prevention:** Use `_getBatchAuthorsForWorks()` for author fetching
 - **Pagination:** Keyset-based with composite cursor `"timestamp|id"`
+- **Location:** `lib/core/data/database/`
 
 **Example:**
 ```dart
@@ -165,8 +297,49 @@ class LibraryFilter extends _$LibraryFilter {
 }
 ```
 
-#### 3. Navigation (GoRouter)
-- **Configuration:** `lib/core/router/app_router.dart`
+#### 3. API Client & Services
+- **Base URL:** `https://api.oooefam.net` (Cloudflare Workers backend)
+- **HTTP Client:** Dio with caching interceptor
+- **Timeout:** 60s receive timeout (supports AI processing)
+- **Location:** `lib/core/services/api/`
+- **Pattern:** UI → Provider → Service → Dio → API endpoint
+
+**Key Services:**
+- `ApiClient` - Base HTTP client configuration
+- `SearchService` - Search endpoints (/v1/search/*, /v1/search/isbn/*, /v1/search/barcode/*)
+- `AuthService` - Firebase authentication
+- `SyncService` - Cloud sync operations
+
+**Error Handling:**
+```dart
+// lib/core/models/exceptions/api_exception.dart
+class ApiException implements Exception {
+  final String message;
+  final int? statusCode;
+  final String? endpoint;
+  final dynamic originalError;
+}
+```
+
+**Provider Pattern:**
+```dart
+// Dependency injection via Riverpod
+final apiClientProvider = Provider<ApiClient>((ref) {
+  return ApiClient(baseUrl: 'https://api.oooefam.net');
+});
+
+final searchServiceProvider = Provider<SearchService>((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return SearchService(apiClient);
+});
+
+// Usage in UI
+final searchService = ref.watch(searchServiceProvider);
+final results = await searchService.searchByTitle(query);
+```
+
+#### 4. Navigation (GoRouter)
+- **Configuration:** `lib/app/router.dart`
 - **Pattern:** `StatefulShellRoute.indexedStack` for persistent tab state
 - **Routes:** 4 main tabs (Library, Search, Scanner, Insights)
 - **Deep Linking:** Supported via path parameters
@@ -184,11 +357,12 @@ StatefulShellRoute.indexedStack(
 )
 ```
 
-#### 4. DTOMapper Pattern
+#### 5. DTOMapper Pattern
 - **Purpose:** Convert API DTOs to Drift database models
-- **Critical:** Use `workDTO.authorIds` for author relationships (NOT list order)
+- **Critical:** Use `dto.id` from API (NOT UUID generation) and `workDTO.authorIds` for relationships
 - **Transactions:** Wrap inserts in `database.transaction()` for atomicity
-- **File:** `lib/core/services/dto_mapper.dart`
+- **Location:** `lib/core/data/dto_mapper.dart`
+- **Status:** 100% compliant with canonical TypeScript contracts (as of Nov 13, 2025)
 
 **Anti-Pattern (DO NOT USE):**
 ```dart
@@ -321,7 +495,7 @@ clang: error: unsupported option '-G' for target 'arm64-apple-macos10.12'
 
 ### Theme Configuration
 ```dart
-// lib/shared/theme/app_theme.dart
+// lib/app/theme.dart
 static final lightTheme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
@@ -330,31 +504,6 @@ static final lightTheme = ThemeData(
   ),
 );
 ```
-
-## Development Workflow
-
-### Adding a New Feature
-1. Create feature directory: `lib/features/<feature>/`
-2. Add subdirectories: `screens/`, `providers/`, `widgets/`
-3. Define Riverpod providers with `@riverpod` annotation
-4. Create Drift queries if needed
-5. Run code generation: `dart run build_runner build`
-6. Implement UI with `ConsumerWidget`
-7. Add route to `lib/core/router/app_router.dart`
-
-### Database Schema Changes
-1. Update table classes in `lib/core/database/database.dart`
-2. Increment `schemaVersion` (currently 4)
-3. Add migration logic if needed
-4. Run: `dart run build_runner build --delete-conflicting-outputs`
-5. Test with fresh database install
-
-### Adding API Integration
-1. Define DTOs in `lib/core/models/dtos/` using Freezed
-2. Update `DTOMapper` in `lib/core/services/dto_mapper.dart`
-3. Add API client methods in `lib/core/services/api_client.dart`
-4. Create provider in relevant feature module
-5. Run code generation
 
 ## Testing Strategy
 
@@ -375,15 +524,37 @@ static final lightTheme = ThemeData(
 
 ## Documentation
 
-**Key Files:**
-- `TODO_REFINED.md` - Production roadmap (12-week plan)
-- `IMPLEMENTATION_LOG.md` - Development progress log
-- `product/*.md` - Product requirement documents (PRDs)
+### Project Documentation
 
-**PRD Structure:**
-- Converted Flutter PRDs: `*-PRD-Flutter.md`
-- Original iOS PRDs: `*-PRD.md`
-- Template: `PRD-Template.md`
+**Planning & Progress:**
+- `TODO_REFINED.md` - Production roadmap (14-week plan, expert validated)
+- `IMPLEMENTATION_LOG.md` - Development progress log
+- `SESSION_SUMMARY.md` - Latest session completion (Nov 13, 2025)
+- `PHASE_1_PROGRESS.md` - Phase 1 progress tracking
+
+**Architecture & Setup:**
+- `CLAUDE.md` - This file (AI assistant guide)
+- `.claude/README.md` - Claude Code agent setup
+- `.claude/ROBIT_OPTIMIZATION.md` - Agent architecture
+- `.claude/ROBIT_SHARING_FRAMEWORK.md` - Cross-repo agent sharing
+
+**GitHub Infrastructure:**
+- `.github/LABELS.md` - Label system reference (48 labels)
+- `.github/REORGANIZATION_COMPLETE.md` - Nov 13 reorganization summary
+- `.github/FLUTTER_ORGANIZATION_PLAN.md` - Architecture plan
+- `.github/AI_COLLABORATION.md` - AI collaboration guide
+
+**API & Data:**
+- `DTO_AUDIT_REPORT.md` - DTO compliance analysis (100% compliant)
+- `API_CLIENT_AUDIT_REPORT.md` - API client implementation details
+
+**Product Requirements:**
+- `product/*.md` - Product requirement documents (PRDs)
+- `product/*-PRD-Flutter.md` - Converted Flutter PRDs
+- `product/*-PRD.md` - Original iOS PRDs
+- `product/PRD-Template.md` - Template for new PRDs
+- `product/CONVERSION_SUMMARY.md` - iOS → Flutter conversion guide
+- `product/QUICK_REFERENCE.md` - Quick product reference
 
 ## iOS → Flutter Architecture Mapping
 
@@ -418,8 +589,81 @@ static final lightTheme = ThemeData(
 - Permissions: Camera, storage in AndroidManifest.xml
 - Notification channels required for Android 8+
 
+## Recent Accomplishments
+
+### Phase 1 Completion (November 13, 2025)
+**Status:** 100% Complete ✅
+
+**Key Achievements:**
+1. ✅ **Project Reorganization** - Modernized to Clean Architecture (26 files reorganized)
+2. ✅ **DTO Compliance** - Achieved 100% compliance with canonical TypeScript contracts
+3. ✅ **API Client Implementation** - SearchService with 3 endpoints fully functional
+4. ✅ **Infrastructure Setup** - Riverpod providers, ApiException, service layer complete
+5. ✅ **Code Review** - Expert validated (8.6/10 quality score)
+6. ✅ **Documentation** - 1500+ lines of comprehensive documentation
+7. ✅ **GitHub Infrastructure** - 48 labels, workflows, issue templates
+
+**Code Quality Metrics:**
+- Readability: 9/10
+- Documentation: 10/10
+- Maintainability: 9/10
+- Security: 8/10
+- Architecture: 9/10
+- **Overall:** 8.6/10
+
+### Agent Setup (November 14-15, 2025)
+**Status:** Complete ✅
+
+1. ✅ Created `.claude/` directory structure
+2. ✅ Synced universal agents from backend (project-manager, zen-mcp-master)
+3. ✅ Added hooks (pre-commit, post-tool-use)
+4. ✅ Created reusable prompts (plan-feature, debug-issue, code-review)
+5. ✅ Configured MCP server integration
+
+## Development Workflow Updates
+
+### Using Barrel Exports (New Pattern)
+
+**Before Reorganization:**
+```dart
+import 'package:books_tracker/features/library/screens/library_screen.dart';
+import 'package:books_tracker/features/library/widgets/book_card.dart';
+import 'package:books_tracker/features/library/providers/library_providers.dart';
+```
+
+**After Reorganization:**
+```dart
+import 'package:books_tracker/features/library/library.dart';
+```
+
+### Adding New Features (Updated)
+1. Create feature directory: `lib/features/<feature>/`
+2. Add subdirectories: `domain/providers/`, `presentation/screens/`, `presentation/widgets/`
+3. Create barrel export: `lib/features/<feature>/<feature>.dart`
+4. Define Riverpod providers with `@riverpod` annotation in `domain/providers/`
+5. Create Drift queries if needed in `lib/core/data/database/`
+6. Run code generation: `dart run build_runner build`
+7. Implement UI with `ConsumerWidget` in `presentation/`
+8. Add route to `lib/app/router.dart`
+
+### Database Schema Changes (Updated)
+1. Update table classes in `lib/core/data/database/database.dart`
+2. Increment `schemaVersion` (currently 4)
+3. Add migration logic if needed
+4. Run: `dart run build_runner build --delete-conflicting-outputs`
+5. Test with fresh database install
+
+### Adding API Integration (Updated)
+1. Define DTOs in `lib/core/data/models/dtos/` using Freezed
+2. Update `DTOMapper` in `lib/core/data/dto_mapper.dart`
+3. Add service class in `lib/core/services/api/` (e.g., SearchService)
+4. Create provider in `lib/core/providers/`
+5. Consume in feature's `domain/providers/`
+6. Run code generation
+
 ---
 
-**Last Updated:** November 12, 2025
-**Project Status:** Phase 1 Foundation - 95% Complete
-**Next Milestone:** Phase 2 Search Feature (Weeks 4-5)
+**Last Updated:** November 15, 2025
+**Project Status:** Phase 1 Foundation - 100% Complete ✅
+**Next Milestone:** Phase 2 Search Feature (Weeks 4-6)
+**Code Quality:** 8.6/10 (Expert Validated)
