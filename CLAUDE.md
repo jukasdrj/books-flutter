@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **BooksTrack Flutter** is a cross-platform book tracking application converted from iOS. The app features AI-powered bookshelf scanning using Gemini 2.0 Flash, multi-mode search, and reading analytics with diversity insights.
 
-**Current Status:** Phase 1 (Foundation) - 100% Complete (as of Nov 13, 2025)
+**Current Status:** Phase 1 (Foundation) - 100% Complete (as of Nov 15, 2025)
 
 **Key Differentiator:** Platform-agnostic Cloudflare Workers backend means zero API changes during iOS → Flutter conversion.
 
@@ -203,29 +203,23 @@ lib/
 │   │
 │   └── providers/        # Global Riverpod providers
 │
-├── features/             # Feature modules (Clean Architecture)
+├── features/             # Feature modules
 │   ├── library/          # Book collection management
-│   │   ├── domain/       # Business logic
-│   │   │   └── providers/
-│   │   ├── presentation/ # UI layer
-│   │   │   ├── screens/
-│   │   │   └── widgets/
+│   │   ├── providers/    # Riverpod providers
+│   │   ├── screens/      # UI screens
+│   │   ├── widgets/      # Feature-specific widgets
 │   │   └── library.dart  # Barrel export
 │   │
 │   ├── search/           # Multi-mode search
-│   │   ├── domain/
-│   │   └── presentation/
-│   │       └── screens/
+│   │   └── screens/      # (Placeholder)
 │   │
 │   ├── scanner/          # Barcode scanner
-│   │   └── presentation/
-│   │       └── screens/
+│   │   └── screens/      # (Placeholder)
 │   │
-│   ├── bookshelf_scanner/ # AI bookshelf scanner
-│   ├── review_queue/     # Review queue for AI detections
+│   ├── bookshelf_scanner/ # AI bookshelf scanner (planned)
+│   ├── review_queue/     # Review queue for AI detections (planned)
 │   └── insights/         # Reading analytics
-│       └── presentation/
-│           └── screens/
+│       └── screens/      # (Placeholder)
 │
 └── shared/               # Reusable components
     └── widgets/
@@ -238,11 +232,11 @@ lib/
 
 **Key Changes (Nov 13, 2025):**
 - ✅ Extracted app configuration to `lib/app/` directory
-- ✅ Split core into `data/` and `domain/` layers (Clean Architecture)
+- ✅ Reorganized core into `data/` and `services/` layers
 - ✅ Organized services by type: `api/`, `auth/`, `sync/`, `storage/`
-- ✅ Features now use `domain/` and `presentation/` separation
+- ✅ Added placeholder `domain/` directories for future Clean Architecture migration
 - ✅ Barrel exports added for each feature (e.g., `library.dart`)
-- ✅ Shared widgets categorized by type
+- ✅ Shared widgets reorganized
 - ✅ main.dart simplified from ~150 lines to 15 lines
 
 **Benefits:**
@@ -314,26 +308,38 @@ class LibraryFilter extends _$LibraryFilter {
 ```dart
 // lib/core/models/exceptions/api_exception.dart
 class ApiException implements Exception {
+  /// Canonical error code from API (INVALID_QUERY, INVALID_ISBN, etc)
+  final String code;
+
+  /// User-friendly error message from API
   final String message;
-  final int? statusCode;
-  final String? endpoint;
-  final dynamic originalError;
+
+  /// Additional error details (optional)
+  final Map<String, dynamic>? details;
+
+  ApiException({
+    required this.code,
+    required this.message,
+    this.details,
+  });
 }
 ```
 
 **Provider Pattern:**
 ```dart
-// Dependency injection via Riverpod
-final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient(baseUrl: 'https://api.oooefam.net');
-});
+// lib/core/providers/api_client_provider.dart
+@riverpod
+Dio apiClient(ApiClientRef ref) {
+  return ApiClient.create();
+}
 
-final searchServiceProvider = Provider<SearchService>((ref) {
-  final apiClient = ref.watch(apiClientProvider);
-  return SearchService(apiClient);
-});
+@riverpod
+SearchService searchService(SearchServiceRef ref) {
+  final dio = ref.watch(apiClientProvider);
+  return SearchService(dio);
+}
 
-// Usage in UI
+// Usage in a widget/provider
 final searchService = ref.watch(searchServiceProvider);
 final results = await searchService.searchByTitle(query);
 ```
@@ -638,12 +644,12 @@ import 'package:books_tracker/features/library/library.dart';
 
 ### Adding New Features (Updated)
 1. Create feature directory: `lib/features/<feature>/`
-2. Add subdirectories: `domain/providers/`, `presentation/screens/`, `presentation/widgets/`
+2. Add subdirectories: `providers/`, `screens/`, `widgets/`
 3. Create barrel export: `lib/features/<feature>/<feature>.dart`
-4. Define Riverpod providers with `@riverpod` annotation in `domain/providers/`
+4. Define Riverpod providers with `@riverpod` annotation in `providers/`
 5. Create Drift queries if needed in `lib/core/data/database/`
 6. Run code generation: `dart run build_runner build`
-7. Implement UI with `ConsumerWidget` in `presentation/`
+7. Implement UI with `ConsumerWidget` in `screens/`
 8. Add route to `lib/app/router.dart`
 
 ### Database Schema Changes (Updated)
