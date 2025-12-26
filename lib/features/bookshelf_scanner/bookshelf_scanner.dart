@@ -2,6 +2,6 @@
 // Barrel export file
 
 // Presentation
-export 'presentation/screens/bookshelf_scanner_screen.dart';
+// TODO: Add screen exports when implemented
 
 // Domain

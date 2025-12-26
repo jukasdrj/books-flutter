@@ -2,6 +2,6 @@
 // Barrel export file
 
 // Presentation
-export 'presentation/screens/scanner_screen.dart';
+export 'screens/scanner_screen.dart';
 
 // Domain
