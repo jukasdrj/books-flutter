@@ -8,6 +8,7 @@ targets:
         generate_for:
           exclude:
             - lib/features/**/providers/**
+            - lib/features/**/widgets/**
             - lib/**/*_provider.dart
             - test/**
 

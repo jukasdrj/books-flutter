@@ -12,8 +12,8 @@ class BooksApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'BooksTrack',
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
       routerConfig: router,
       debugShowCheckedModeBanner: false,

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:books_flutter/features/library/screens/library_screen.dart';
-import 'package:books_flutter/features/search/screens/search_screen.dart';
-import 'package:books_flutter/features/scanner/screens/scanner_screen.dart';
-import 'package:books_flutter/features/insights/screens/insights_screen.dart';
-import 'package:books_flutter/shared/widgets/layouts/main_scaffold.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../features/library/screens/library_screen.dart';
+import '../features/search/screens/search_screen.dart';
+import '../features/scanner/screens/scanner_screen.dart';
+import '../features/insights/screens/insights_screen.dart';
+import '../shared/widgets/layouts/main_scaffold.dart';
+
+part 'router.g.dart';
 
 /// App-wide routing configuration using go_router
 /// Uses StatefulShellRoute for persistent tab navigation state
-final appRouter = GoRouter(
+@riverpod
+GoRouter router(RouterRef ref) {
+  return GoRouter(
   initialLocation: '/library',
   routes: [
     StatefulShellRoute.indexedStack(
@@ -55,4 +60,5 @@ final appRouter = GoRouter(
       ],
     ),
   ],
-);
+  );
+}
