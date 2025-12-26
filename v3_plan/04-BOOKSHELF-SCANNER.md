@@ -322,6 +322,7 @@ class DetectedBookData {
 
 /// Manages WebSocket connection for real-time progress updates.
 class ProgressManager {
+  // TODO: Externalize WebSocket URL to configuration
   static const String _baseUrl = 'wss://api.oooefam.net/ws/progress';
 
   WebSocketChannel? _channel;

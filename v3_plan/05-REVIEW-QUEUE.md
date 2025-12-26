@@ -349,6 +349,7 @@ class _ReviewQueueCard extends StatelessWidget {
 **File:** `lib/features/review_queue/screens/correction_screen.dart`
 
 ```dart
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/data/database/database.dart';
@@ -414,8 +415,8 @@ class _CorrectionScreenState extends ConsumerState<CorrectionScreen> {
             if (widget.work.originalImagePath != null)
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  widget.work.originalImagePath!,
+                child: Image.file(
+                  File(widget.work.originalImagePath!),
                   height: 200,
                   fit: BoxFit.contain,
                   errorBuilder: (_, __, ___) => _buildImagePlaceholder(),
