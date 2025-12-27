@@ -13,8 +13,9 @@
   ],
   "managed_agents": [
     "flutter-build-agent",
-    "zen-analysis-agent"
+    "pal-analysis-agent"
   ],
+  "mcp_server": "pal",
   "core_responsibilities": [
     "Parse user requests to identify required specialists",
     "Break down complex tasks into phases",
@@ -54,7 +55,7 @@
         "Development tools (hot reload, profiling)"
       ]
     },
-    "zen-analysis-agent": {
+    "pal-analysis-agent": {
       "triggers": [
         "review",
         "audit",
@@ -90,7 +91,7 @@
         "path": "fast",
         "steps": [
           {
-            "agent": "zen-analysis-agent",
+            "agent": "pal-analysis-agent",
             "tool": "codereview",
             "validation": "internal"
           },
@@ -108,13 +109,14 @@
         "path": "careful",
         "steps": [
           {
-            "agent": "zen-analysis-agent",
+            "agent": "pal-analysis-agent",
             "tool": "codereview",
             "validation": "external"
           },
           {
-            "agent": "zen-analysis-agent",
-            "tool": "secaudit",
+            "agent": "pal-analysis-agent",
+            "tool": "codereview",
+            "review_type": "security",
             "condition": "if touching auth/Firebase"
           },
           {
@@ -138,7 +140,7 @@
         "path": "fast response",
         "steps": [
           {
-            "agent": "zen-analysis-agent",
+            "agent": "pal-analysis-agent",
             "tool": "debug"
           },
           {
@@ -148,7 +150,7 @@
             "action": "implement fix"
           },
           {
-            "agent": "zen-analysis-agent",
+            "agent": "pal-analysis-agent",
             "tool": "codereview",
             "validation": "internal"
           },
@@ -170,7 +172,7 @@
             "action": "reproduce in debug mode"
           },
           {
-            "agent": "zen-analysis-agent",
+            "agent": "pal-analysis-agent",
             "tool": "debug"
           },
           {
@@ -192,7 +194,7 @@
         "scope": "light review",
         "steps": [
           {
-            "agent": "zen-analysis-agent",
+            "agent": "pal-analysis-agent",
             "tool": "codereview",
             "validation": "internal"
           }
@@ -202,13 +204,13 @@
         "scope": "thorough review",
         "steps": [
           {
-            "agent": "zen-analysis-agent",
+            "agent": "pal-analysis-agent",
             "tool": "codereview",
             "validation": "external"
           },
           {
-            "agent": "zen-analysis-agent",
-            "tool": "analyze",
+            "agent": "pal-analysis-agent",
+            "tool": "thinkdeep",
             "condition": "if architecture changes"
           }
         ]
@@ -218,12 +220,12 @@
         "areas": ["auth", "Firebase rules", "API keys"],
         "steps": [
           {
-            "agent": "zen-analysis-agent",
-            "tool": "secaudit",
-            "comprehensive": true
+            "agent": "pal-analysis-agent",
+            "tool": "codereview",
+            "review_type": "security"
           },
           {
-            "agent": "zen-analysis-agent",
+            "agent": "pal-analysis-agent",
             "tool": "codereview",
             "validation": "external"
           },
@@ -261,7 +263,7 @@
               "action": "run build_runner watch mode"
             },
             {
-              "agent": "zen-analysis-agent",
+              "agent": "pal-analysis-agent",
               "tool": "codereview",
               "purpose": "validate Flutter/Dart patterns"
             }
@@ -271,8 +273,8 @@
           "name": "Testing",
           "steps": [
             {
-              "agent": "zen-analysis-agent",
-              "tool": "testgen"
+              "agent": "pal-analysis-agent",
+              "action": "generate tests"
             },
             {
               "agent": "flutter-build-agent",
@@ -288,8 +290,9 @@
           "name": "Security",
           "steps": [
             {
-              "agent": "zen-analysis-agent",
-              "tool": "secaudit",
+              "agent": "pal-analysis-agent",
+              "tool": "codereview",
+              "review_type": "security",
               "condition": "if Firebase/auth touched"
             }
           ]
@@ -298,7 +301,7 @@
           "name": "Build & Deploy",
           "steps": [
             {
-              "agent": "zen-analysis-agent",
+              "agent": "pal-analysis-agent",
               "tool": "precommit"
             },
             {
@@ -346,7 +349,7 @@
           "name": "Investigation",
           "steps": [
             {
-              "agent": "zen-analysis-agent",
+              "agent": "pal-analysis-agent",
               "tool": "debug"
             },
             {
@@ -366,7 +369,7 @@
               "action": "run code generation if needed"
             },
             {
-              "agent": "zen-analysis-agent",
+              "agent": "pal-analysis-agent",
               "tool": "codereview",
               "validation": "internal"
             }
@@ -393,7 +396,7 @@
           "name": "Post-Mortem",
           "steps": [
             {
-              "agent": "zen-analysis-agent",
+              "agent": "pal-analysis-agent",
               "tool": "thinkdeep",
               "purpose": "what went wrong, how to prevent"
             },
@@ -410,14 +413,14 @@
           "name": "Analysis",
           "parallel": [
             {
-              "agent": "zen-analysis-agent",
-              "tool": "analyze",
+              "agent": "pal-analysis-agent",
+              "tool": "thinkdeep",
               "focus": "current architecture"
             },
             {
-              "agent": "zen-analysis-agent",
-              "tool": "refactor",
-              "focus": "identify opportunities"
+              "agent": "pal-analysis-agent",
+              "tool": "codereview",
+              "focus": "identify refactoring opportunities"
             }
           ]
         },
@@ -425,11 +428,11 @@
           "name": "Planning",
           "steps": [
             {
-              "agent": "zen-analysis-agent",
+              "agent": "pal-analysis-agent",
               "tool": "planner"
             },
             {
-              "agent": "zen-analysis-agent",
+              "agent": "pal-analysis-agent",
               "tool": "consensus",
               "condition": "if multiple approaches"
             }
@@ -446,7 +449,7 @@
               "action": "run build_runner watch mode"
             },
             {
-              "agent": "zen-analysis-agent",
+              "agent": "pal-analysis-agent",
               "tool": "codereview",
               "frequency": "validate each step"
             }
@@ -456,8 +459,8 @@
           "name": "Validation",
           "steps": [
             {
-              "agent": "zen-analysis-agent",
-              "tool": "testgen"
+              "agent": "pal-analysis-agent",
+              "action": "generate tests"
             },
             {
               "agent": "flutter-build-agent",
@@ -473,7 +476,7 @@
           "name": "Build & Merge",
           "steps": [
             {
-              "agent": "zen-analysis-agent",
+              "agent": "pal-analysis-agent",
               "tool": "precommit",
               "comprehensive": true
             },
@@ -491,7 +494,7 @@
     }
   },
   "context_sharing": {
-    "flutter_to_zen": {
+    "flutter_to_pal": {
       "when": "builds/tests reveal code issues",
       "shares": [
         "Build errors and stack traces",
@@ -501,9 +504,9 @@
         "Dependency conflicts",
         "Firebase deployment errors"
       ],
-      "zen_uses_for": ["debug", "codereview", "thinkdeep", "analyze"]
+      "pal_uses_for": ["debug", "codereview", "thinkdeep"]
     },
-    "zen_to_flutter": {
+    "pal_to_flutter": {
       "when": "code review/audit completes",
       "shares": [
         "Files changed (Riverpod providers, Drift tables)",
@@ -544,7 +547,7 @@
   "performance_optimization": {
     "parallel_execution": {
       "description": "Run agents in parallel when tasks are independent",
-      "example": "analyze_logs (flutter) + debug_code (zen) simultaneously"
+      "example": "reproduce_issue (flutter) + debug_code (pal) simultaneously"
     },
     "sequential_with_handoff": {
       "description": "Sequential execution when tasks depend on prior results",
@@ -579,7 +582,7 @@
       "profile",
       "analyze"
     ],
-    "keywords_to_zen": [
+    "keywords_to_pal": [
       "review",
       "audit",
       "analyze",
@@ -599,9 +602,9 @@
       "patterns"
     ],
     "keywords_to_both": {
-      "review and build": "zen (review) → flutter (build)",
-      "fix and deploy": "zen (debug) → validate → flutter (build) → flutter (deploy)",
-      "optimize and test": "zen (refactor) → zen (codereview) → flutter (test) → flutter (build)"
+      "review and build": "pal (codereview) → flutter (build)",
+      "fix and deploy": "pal (debug) → validate → flutter (build) → flutter (deploy)",
+      "optimize and test": "pal (codereview) → flutter (test) → flutter (build)"
     }
   },
   "communication_style": {

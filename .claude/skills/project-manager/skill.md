@@ -1,6 +1,6 @@
 # BooksTrack Project Manager
 
-**Purpose:** Top-level orchestration agent that delegates work to specialized agents (Cloudflare operations, Zen MCP tools) and coordinates complex multi-phase tasks.
+**Purpose:** Top-level orchestration agent that delegates work to specialized agents (Flutter operations, PAL MCP tools) and coordinates complex multi-phase tasks.
 
 **When to use:** For complex requests requiring multiple agents, strategic planning, or when unsure which specialist to invoke.
 
@@ -12,8 +12,8 @@
 - Parse user requests to identify required specialists
 - Break down complex tasks into phases
 - Delegate to appropriate agents:
-  - **cloudflare-agent** for deployment/monitoring
-  - **zen-mcp-master** for deep analysis/review
+  - **flutter-agent** for build/test/deploy
+  - **pal-master** for deep analysis/review (uses PAL MCP tools)
 - Coordinate multi-agent workflows
 
 ### 2. Strategic Planning
@@ -55,7 +55,7 @@ Manager: Delegates to flutter-agent with context:
   - Report any platform-specific issues (e.g., macOS gRPC)
 ```
 
-### When to Delegate to zen-mcp-master
+### When to Delegate to pal-master
 ```
 User request contains:
 - "review", "audit", "analyze"
@@ -66,8 +66,8 @@ User request contains:
 
 Example:
 User: "Review the search handler for security issues"
-Manager: Delegates to zen-mcp-master with:
-  - Tool: secaudit
+Manager: Delegates to pal-master with:
+  - Tool: codereview (with security focus)
   - Scope: src/handlers/search.js
   - Focus: OWASP Top 10, input validation
 ```
@@ -82,32 +82,33 @@ Complex workflows requiring:
 Example:
 User: "Review my changes and build for release"
 Manager:
-  1. Delegates pre-commit validation to zen-mcp-master (precommit)
-  2. Delegates code review to zen-mcp-master (codereview)
+  1. Delegates pre-commit validation to pal-master (precommit tool)
+  2. Delegates code review to pal-master (codereview tool)
   3. Delegates build to flutter-agent (with code generation)
   4. Reports build results and any issues
 ```
 
 ---
 
-## Available Models (from Zen MCP)
+## Available Models (from PAL MCP)
 
 ### Google Gemini (Recommended for most tasks)
-- `gemini-2.5-pro` (alias: `pro`) - Deep reasoning, complex problems
-- `gemini-2.5-pro-computer-use` (alias: `propc`, `gempc`) - UI interaction, automation
-- `gemini-2.5-flash-preview-09-2025` (alias: `flash-preview`) - Fast, efficient
+- `gemini-3-pro-preview` (alias: `pro`, `gemini3`) - Deep reasoning, 1M context
+- `gemini-3-flash-preview` (alias: `flash3`) - Fast, 200K context
+- `gemini-2.5-flash` (alias: `flash`) - Ultra-fast, 1M context
+- `gemini-2.5-flash-lite` (alias: `lite`) - Budget-friendly, 1M context
 
 ### X.AI Grok (Specialized tasks)
-- `grok-4` (alias: `grok4`) - Most intelligent, real-time search
-- `grok-4-heavy` (alias: `grokheavy`) - Most powerful version
-- `grok-4-fast-reasoning` (alias: `grok4fast`) - Ultra-fast reasoning
-- `grok-code-fast-1` (alias: `grokcode`) - Specialized for agentic coding
+- `grok-4` (alias: `grok`, `grok4`) - High-performance reasoning, 256K context
+- `grok-4-1-fast-reasoning` (alias: `grok4fast`) - 2M context, fast reasoning
+- `grok-4-1-fast-non-reasoning` (alias: `grokfast`, `grokheavy`) - 2M context, instant
+- `grok-code-fast-1` (alias: `grokcode`) - Specialized for agentic coding, 256K context
 
 **Model Selection Strategy:**
-- **Code review/security:** `gemini-2.5-pro` or `grok-4-heavy`
-- **Fast analysis:** `flash-preview` or `grok4fast`
-- **Complex debugging:** `gemini-2.5-pro` or `grok-4`
-- **Deployment automation:** `gempc` or `propc`
+- **Code review/security:** `pro` or `grok4`
+- **Fast analysis:** `flash` or `grokfast`
+- **Complex debugging:** `pro` or `grok4`
+- **Huge context needs:** `grok4fast` (2M tokens)
 
 ---
 
@@ -117,13 +118,13 @@ Manager:
 ```
 Is this a critical hotfix?
 ├─ Yes → Fast path:
-│   1. Quick validation (zen-mcp-master: codereview, internal validation)
+│   1. Quick validation (pal-master: codereview, internal validation)
 │   2. Build immediately (flutter-agent: with code generation)
 │   3. Deploy to Firebase if web (flutter-agent)
 │
 └─ No → Careful path:
-    1. Comprehensive review (zen-mcp-master: codereview, external validation)
-    2. Security audit if touching auth/Firebase (zen-mcp-master: secaudit)
+    1. Comprehensive review (pal-master: codereview, external validation)
+    2. Security audit if touching auth/Firebase (pal-master: secaudit)
     3. Build for all platforms (flutter-agent)
     4. Deploy web to Firebase (flutter-agent)
     5. Escalate app store submissions to human
@@ -133,16 +134,16 @@ Is this a critical hotfix?
 ```
 Error severity?
 ├─ Critical (app crashes, data loss) → Fast response:
-│   1. Investigate error (zen-mcp-master: debug)
+│   1. Investigate error (pal-master: debug)
 │   2. Identify root cause
 │   3. Implement fix
-│   4. Quick validation (zen-mcp-master: codereview, internal)
+│   4. Quick validation (pal-master: codereview, internal)
 │   5. Build and test (flutter-agent)
 │   6. Deploy hotfix to Firebase if web
 │
 └─ Non-critical → Systematic approach:
     1. Reproduce issue (flutter-agent: run in debug mode)
-    2. Debug with context (zen-mcp-master: debug)
+    2. Debug with context (pal-master: debug)
     3. Propose fix
     4. Review and test (flutter-agent)
     5. Build for release (flutter-agent)
@@ -152,15 +153,15 @@ Error severity?
 ```
 Scope of changes?
 ├─ Single file, small change → Light review:
-│   zen-mcp-master: codereview (internal validation)
+│   pal-master: codereview (internal validation)
 │
 ├─ Multiple files, refactoring → Thorough review:
-│   zen-mcp-master: codereview (external validation)
+│   pal-master: codereview (external validation)
 │   + analyze (if architecture changes)
 │
 └─ Security-critical (auth, Firebase rules, API keys) → Deep audit:
-    1. zen-mcp-master: secaudit (comprehensive)
-    2. zen-mcp-master: codereview (external validation)
+    1. pal-master: secaudit (comprehensive)
+    2. pal-master: codereview (external validation)
     3. flutter-agent: test with Firebase emulators
     4. Request human approval before deploy
 ```
@@ -179,18 +180,18 @@ Phase 1: Planning
 Phase 2: Implementation
 - Claude Code implements across files
 - flutter-agent: run build_runner watch mode
-- zen-mcp-master: codereview (validate Flutter/Dart patterns)
+- pal-master: codereview (validate Flutter/Dart patterns)
 
 Phase 3: Testing
-- zen-mcp-master: testgen (generate widget/unit tests)
+- pal-master: testgen (generate widget/unit tests)
 - flutter-agent: run tests locally
 - flutter-agent: test on iOS/Android/Web
 
 Phase 4: Security
-- zen-mcp-master: secaudit (if Firebase/auth touched)
+- pal-master: secaudit (if Firebase/auth touched)
 
 Phase 5: Build & Deploy
-- zen-mcp-master: precommit (validate git changes)
+- pal-master: precommit (validate git changes)
 - flutter-agent: code generation + build all platforms
 - flutter-agent: deploy web to Firebase
 - Escalate app store submissions to human
@@ -208,13 +209,13 @@ Phase 1: Triage (Immediate)
 - Check Firebase logs/Analytics if applicable
 
 Phase 2: Investigation
-- zen-mcp-master: debug root cause
+- pal-master: debug root cause
 - flutter-agent: test with different configurations
 
 Phase 3: Resolution
 - Implement fix
 - flutter-agent: run code generation if needed
-- zen-mcp-master: codereview (fast internal validation)
+- pal-master: codereview (fast internal validation)
 
 Phase 4: Build & Deploy
 - flutter-agent: build and test
@@ -222,32 +223,32 @@ Phase 4: Build & Deploy
 - Escalate app store updates to human
 
 Phase 5: Post-Mortem
-- zen-mcp-master: thinkdeep (what went wrong, how to prevent)
+- pal-master: thinkdeep (what went wrong, how to prevent)
 - Document learnings in implementation log
 ```
 
 ### Major Refactoring
 ```
 Phase 1: Analysis
-- zen-mcp-master: analyze (current architecture)
-- zen-mcp-master: refactor (identify opportunities)
+- pal-master: analyze (current architecture)
+- pal-master: refactor (identify opportunities)
 
 Phase 2: Planning
-- zen-mcp-master: planner (step-by-step refactor plan)
-- Review plan with zen-mcp-master: consensus (if multiple approaches)
+- pal-master: planner (step-by-step refactor plan)
+- Review plan with pal-master: consensus (if multiple approaches)
 
 Phase 3: Execution
 - Claude Code performs refactoring
 - flutter-agent: run build_runner watch mode
-- zen-mcp-master: codereview (validate each step)
+- pal-master: codereview (validate each step)
 
 Phase 4: Validation
-- zen-mcp-master: testgen (ensure widget/unit test coverage)
+- pal-master: testgen (ensure widget/unit test coverage)
 - flutter-agent: run full test suite
 - flutter-agent: test on multiple platforms
 
 Phase 5: Build & Merge
-- zen-mcp-master: precommit (comprehensive check)
+- pal-master: precommit (comprehensive check)
 - flutter-agent: code generation + build all platforms
 - flutter-agent: deploy web to Firebase staging
 ```
@@ -256,7 +257,7 @@ Phase 5: Build & Merge
 
 ## Context Sharing Between Agents
 
-### flutter-agent → zen-mcp-master
+### flutter-agent → pal-master
 When builds/tests reveal code issues:
 ```
 Context to share:
@@ -267,14 +268,14 @@ Context to share:
 - Dependency conflicts
 - Firebase deployment errors
 
-zen-mcp-master uses this for:
+pal-master uses this for:
 - debug (root cause analysis)
 - codereview (validate fix)
 - thinkdeep (systemic issues)
 - analyze (dependency resolution)
 ```
 
-### zen-mcp-master → flutter-agent
+### pal-master → flutter-agent
 When code review/audit completes:
 ```
 Context to share:
@@ -349,13 +350,13 @@ Promise.all([
 ### Sequential with Handoff
 When tasks depend on prior results:
 ```
-cloudflare-agent (get error logs)
+flutter-agent (get error logs)
   ↓ [error patterns]
-zen-mcp-master (debug with context)
+pal-master (debug with context)
   ↓ [root cause + fix]
-zen-mcp-master (validate fix)
+pal-master (validate fix)
   ↓ [approved changes]
-cloudflare-agent (deploy + monitor)
+flutter-agent (deploy + monitor)
 ```
 
 ### Caching Decisions
@@ -377,7 +378,7 @@ For repeated similar requests:
 - Firebase deploy, hosting
 - hot reload, profile, analyze
 
-### Keywords → zen-mcp-master
+### Keywords → pal-master
 - review, audit, analyze
 - security, vulnerability, Firebase rules
 - debug, investigate, trace
@@ -434,17 +435,17 @@ Instructions:
 User: "Review and build for release"
 
 Project Manager analyzes:
-- Phase 1: Pre-commit validation (zen-mcp-master)
-- Phase 2: Code review (zen-mcp-master)
+- Phase 1: Pre-commit validation (pal-master)
+- Phase 2: Code review (pal-master)
 - Phase 3: Build (flutter-agent)
 
 Workflow:
-1. zen-mcp-master: precommit
+1. pal-master: precommit
    - Model: gemini-2.5-pro
    - Validate git changes
    - Check for security issues
 
-2. zen-mcp-master: codereview
+2. pal-master: codereview
    - Model: gemini-2.5-pro
    - Focus: Flutter/Dart best practices
    - Validation: external
@@ -460,7 +461,7 @@ Workflow:
 
 ## Model Selection Guidelines
 
-### For zen-mcp-master Tasks
+### For pal-master Tasks
 
 **Use gemini-2.5-pro when:**
 - Deep reasoning required (architecture, complex bugs)

@@ -1,6 +1,6 @@
-# Debug Issue with Zen MCP
+# Debug Issue with PAL MCP
 
-Use the Zen MCP `debug` tool for systematic debugging with hypothesis testing and expert AI analysis.
+Use the PAL MCP `debug` tool for systematic debugging with hypothesis testing and expert AI analysis.
 
 ## Instructions
 

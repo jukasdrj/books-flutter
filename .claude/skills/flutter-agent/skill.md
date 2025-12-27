@@ -39,7 +39,7 @@ dart run build_runner clean
 - Detect code generation conflicts
 - Parse build_runner errors for actionable messages
 - Suggest `--delete-conflicting-outputs` when conflicts occur
-- Delegate complex schema issues to zen-mcp-master (debug tool)
+- Delegate complex schema issues to pal-master (debug tool)
 
 ---
 
@@ -161,8 +161,8 @@ firebase emulators:exec "flutter test integration_test/"
 ```
 
 **Complex Firebase Operations:**
-- Delegate Firestore security rules to zen-mcp-master (secaudit tool)
-- Delegate Firebase Auth configuration to zen-mcp-master
+- Delegate Firestore security rules to pal-master (secaudit tool)
+- Delegate Firebase Auth configuration to pal-master
 - Handle autonomous: Simple hosting deploys, emulator management
 
 ---
@@ -277,7 +277,7 @@ flutter pub deps
 # Identify conflicts
 flutter pub deps --style=compact | grep '✗'
 
-# Delegate complex conflicts to zen-mcp-master
+# Delegate complex conflicts to pal-master
 # (Use analyze or debug tool for resolution strategies)
 ```
 
@@ -339,7 +339,7 @@ flutter analyze
 # 4. Run tests
 flutter test
 
-# 5. Delegate to zen-mcp-master for code review
+# 5. Delegate to pal-master for code review
 # (Use precommit tool for comprehensive validation)
 ```
 
@@ -375,7 +375,7 @@ flutter run -d <device>
 # 2. If build fails, check code generation
 dart run build_runner build --delete-conflicting-outputs
 
-# 3. If complex, delegate to zen-mcp-master
+# 3. If complex, delegate to pal-master
 # (Use debug tool for systematic investigation)
 
 # 4. After fix, validate with tests
@@ -386,14 +386,13 @@ flutter test
 
 ## Integration with Other Agents
 
-### Delegates to zen-mcp-master for:
+### Delegates to pal-master for:
 - **Code Review:** `codereview` tool for Dart/Flutter best practices
-- **Security Audit:** `secaudit` tool for Firebase security rules, API keys
+- **Security Review:** `codereview` tool (review_type: security) for Firebase rules, API keys
 - **Complex Debugging:** `debug` tool for mysterious Flutter/Dart issues
-- **Test Generation:** `testgen` tool for comprehensive test coverage
-- **Dependency Conflicts:** `analyze` tool for complex dependency graphs
+- **Dependency Analysis:** `thinkdeep` tool for complex dependency graphs
 - **Pre-Commit Validation:** `precommit` tool for comprehensive change review
-- **Performance Analysis:** `analyze` tool for widget rebuild optimization
+- **Architecture Analysis:** `thinkdeep` tool for widget rebuild optimization
 
 ### Receives delegation from project-manager for:
 - Build/test/deploy requests
@@ -425,7 +424,7 @@ Error: Existing outputs found...
 ```
 Error: No Material widget found...
 → Solution: Check widget tree, wrap with MaterialApp
-→ Delegate: zen-mcp-master (debug tool)
+→ Delegate: pal-master (debug tool)
 ```
 
 ### macOS Build Failure
@@ -440,14 +439,14 @@ Error: clang: error: unsupported option '-G'...
 ```
 Error: Version solving failed...
 → Solution: Run `flutter pub deps` to identify conflicts
-→ Delegate: zen-mcp-master (analyze tool) for complex conflicts
+→ Delegate: pal-master (analyze tool) for complex conflicts
 ```
 
 ### Test Failures
 ```
 Error: Test failed...
 → Solution: Run specific test in isolation
-→ Delegate: zen-mcp-master (debug tool) for complex failures
+→ Delegate: pal-master (debug tool) for complex failures
 ```
 
 ---
@@ -468,7 +467,7 @@ Error: Test failed...
 ### Firebase Deployment
 - Web builds deploy to Firebase Hosting
 - Always test locally with `firebase emulators` first
-- Delegate security rules review to zen-mcp-master
+- Delegate security rules review to pal-master
 
 ### Performance Monitoring
 - Use `--profile` mode for performance testing
@@ -524,12 +523,11 @@ firebase deploy --only hosting
 - Development tools (hot reload, profiling)
 
 ### When to Delegate
-- Code review → zen-mcp-master (codereview)
-- Security audit → zen-mcp-master (secaudit)
-- Complex debugging → zen-mcp-master (debug)
-- Test generation → zen-mcp-master (testgen)
-- Dependency analysis → zen-mcp-master (analyze)
-- Pre-commit validation → zen-mcp-master (precommit)
+- Code review → pal-master (codereview)
+- Security review → pal-master (codereview, review_type: security)
+- Complex debugging → pal-master (debug)
+- Architecture analysis → pal-master (thinkdeep)
+- Pre-commit validation → pal-master (precommit)
 
 ---
 

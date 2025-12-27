@@ -1,6 +1,6 @@
-# Plan Feature with Zen MCP
+# Plan Feature with PAL MCP
 
-Use the Zen MCP `planner` tool for interactive, sequential planning of complex features with expert AI validation.
+Use the PAL MCP `planner` tool for interactive, sequential planning of complex features with expert AI validation.
 
 ## Instructions
 

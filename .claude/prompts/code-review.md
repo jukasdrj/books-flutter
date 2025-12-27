@@ -1,6 +1,6 @@
-# Code Review with Zen MCP
+# Code Review with PAL MCP
 
-Use the Zen MCP `codereview` tool to perform comprehensive code review with expert AI validation.
+Use the PAL MCP `codereview` tool to perform comprehensive code review with expert AI validation.
 
 ## Instructions
 

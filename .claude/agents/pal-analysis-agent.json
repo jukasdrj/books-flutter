@@ -1,0 +1,310 @@
+{
+  "name": "pal-analysis-agent",
+  "description": "Orchestrates PAL MCP tools for deep code analysis, debugging, code review, and systematic investigation",
+  "version": "2.0.0",
+  "type": "autonomous",
+  "capabilities": [
+    "code-review",
+    "debugging",
+    "performance-analysis",
+    "architecture-review",
+    "pre-commit-validation",
+    "multi-model-consensus",
+    "api-lookup"
+  ],
+  "mcp_server": "pal",
+  "available_tools": {
+    "chat": {
+      "description": "General conversation and collaborative thinking",
+      "use_when": [
+        "brainstorming ideas",
+        "getting second opinions",
+        "quick questions",
+        "exploratory discussions"
+      ],
+      "model_preference": "pro"
+    },
+    "debug": {
+      "description": "Systematic bug investigation with hypothesis testing",
+      "use_when": [
+        "encountering bugs or test failures",
+        "unexpected behavior",
+        "mysterious errors",
+        "production incidents"
+      ],
+      "model_preference": "pro",
+      "pattern": "root cause investigation -> hypothesis testing -> fix validation"
+    },
+    "codereview": {
+      "description": "Comprehensive code review covering quality, security, performance, architecture",
+      "use_when": [
+        "after implementing features",
+        "before merging PRs",
+        "quality gates",
+        "significant changes",
+        "security-sensitive code"
+      ],
+      "model_preference": "pro",
+      "validation_types": ["external", "internal"],
+      "review_types": ["full", "security", "performance", "quick"]
+    },
+    "thinkdeep": {
+      "description": "Multi-stage investigation and reasoning for complex problems",
+      "use_when": [
+        "architecture decisions",
+        "performance issues",
+        "complex bugs",
+        "systemic analysis"
+      ],
+      "model_preference": "pro",
+      "thinking_modes": ["minimal", "low", "medium", "high", "max"]
+    },
+    "planner": {
+      "description": "Interactive sequential planning with revision and branching",
+      "use_when": [
+        "complex projects",
+        "migrations",
+        "multi-phase work",
+        "feature planning"
+      ],
+      "model_preference": "pro",
+      "supports_branching": true
+    },
+    "consensus": {
+      "description": "Multi-model decision making through systematic debate",
+      "use_when": [
+        "uncertain about approach",
+        "need validation from multiple perspectives",
+        "complex tradeoffs",
+        "architectural choices"
+      ],
+      "required_models": 2,
+      "stances": ["for", "against", "neutral"]
+    },
+    "precommit": {
+      "description": "Validates git changes and repository state before committing",
+      "use_when": [
+        "before commits",
+        "multi-repository validation",
+        "security review of changes",
+        "completeness verification"
+      ],
+      "model_preference": "pro",
+      "validation_types": ["external", "internal"]
+    },
+    "apilookup": {
+      "description": "Fetches current API/SDK documentation and version info",
+      "use_when": [
+        "checking latest SDK versions",
+        "looking for breaking changes",
+        "migration guides",
+        "deprecation info"
+      ],
+      "model_preference": "auto"
+    },
+    "challenge": {
+      "description": "Forces critical thinking and prevents reflexive agreement",
+      "use_when": [
+        "validating assumptions",
+        "contentious claims",
+        "pushing back on ideas"
+      ],
+      "model_preference": "auto"
+    },
+    "clink": {
+      "description": "Bridge to external AI CLIs (Gemini, Codex, Claude)",
+      "use_when": [
+        "cross-tool workflows",
+        "specialized CLI features"
+      ],
+      "available_clis": ["claude", "codex", "gemini"]
+    }
+  },
+  "model_selection": {
+    "google_gemini": {
+      "gemini-3-pro-preview": {
+        "alias": ["pro", "gemini3"],
+        "context": "1M tokens",
+        "features": ["thinking", "code-gen"],
+        "best_for": ["code review", "debugging", "deep analysis"]
+      },
+      "gemini-3-flash-preview": {
+        "alias": ["flash3"],
+        "context": "200K tokens",
+        "features": ["fast"],
+        "best_for": ["quick analysis"]
+      },
+      "gemini-2.5-flash": {
+        "alias": ["flash"],
+        "context": "1M tokens",
+        "features": ["fast"],
+        "best_for": ["quick reviews", "simple queries"]
+      },
+      "gemini-2.5-flash-lite": {
+        "alias": ["lite", "flash-lite"],
+        "context": "1M tokens",
+        "features": ["budget"],
+        "best_for": ["routine checks", "documentation"]
+      }
+    },
+    "xai_grok": {
+      "grok-4": {
+        "alias": ["grok", "grok4"],
+        "context": "256K tokens",
+        "features": ["thinking"],
+        "best_for": ["complex reasoning", "architecture"]
+      },
+      "grok-4-1-fast-reasoning": {
+        "alias": ["grok4fast"],
+        "context": "2M tokens",
+        "features": ["thinking", "huge-context"],
+        "best_for": ["large codebase analysis"]
+      },
+      "grok-4-1-fast-non-reasoning": {
+        "alias": ["grokfast", "grokheavy"],
+        "context": "2M tokens",
+        "features": ["instant"],
+        "best_for": ["quick responses", "simple tasks"]
+      },
+      "grok-code-fast-1": {
+        "alias": ["grokcode", "code-fast"],
+        "context": "256K tokens",
+        "features": ["code-gen"],
+        "best_for": ["coding tasks", "refactoring"]
+      }
+    }
+  },
+  "triggers": {
+    "keywords": [
+      "review",
+      "audit",
+      "analyze",
+      "debug",
+      "investigate",
+      "refactor",
+      "optimize",
+      "security",
+      "root cause",
+      "plan"
+    ],
+    "file_patterns": [
+      "firestore.rules",
+      "storage.rules",
+      "firebase.json"
+    ],
+    "scenarios": [
+      "complex bugs",
+      "security concerns",
+      "performance issues",
+      "architecture decisions",
+      "pre-commit validation"
+    ]
+  },
+  "workflows": {
+    "bug_investigation": {
+      "tool": "debug",
+      "steps": [
+        "Gather evidence (logs, stack traces, file context)",
+        "Form hypothesis",
+        "Test hypothesis with additional investigation",
+        "Propose fix with confidence level",
+        "Validate fix with codereview"
+      ],
+      "model": "pro"
+    },
+    "code_review_comprehensive": {
+      "tool": "codereview",
+      "steps": [
+        "Outline review strategy",
+        "Analyze quality, security, performance, architecture",
+        "Expert validation",
+        "Report findings with severity"
+      ],
+      "review_type": "full",
+      "validation": "external",
+      "model": "pro"
+    },
+    "security_review": {
+      "tool": "codereview",
+      "steps": [
+        "Security-focused code review",
+        "Check for common vulnerabilities",
+        "Validate input handling",
+        "Review authentication/authorization"
+      ],
+      "review_type": "security",
+      "model": "pro"
+    },
+    "pre_commit_validation": {
+      "tool": "precommit",
+      "steps": [
+        "Validate git diff",
+        "Security review of changes",
+        "Completeness check",
+        "Expert validation"
+      ],
+      "model": "pro",
+      "validation": "external"
+    }
+  },
+  "critical_rules": {
+    "always_use_debug_for_bugs": true,
+    "use_codereview_after_changes": true,
+    "use_consensus_for_uncertain_decisions": true,
+    "use_continuation_id_for_multi_turn": true
+  },
+  "continuation_pattern": {
+    "description": "ALWAYS reuse continuation_id when continuing previous MCP work",
+    "preserves": [
+      "full conversation context",
+      "files examined",
+      "findings and evidence",
+      "hypothesis history"
+    ]
+  },
+  "delegations": {
+    "receives_from": {
+      "flutter-build-agent": [
+        "Build errors for debugging",
+        "Test failures for investigation",
+        "Security concerns",
+        "Code generation issues"
+      ],
+      "project-manager": [
+        "Complex analysis requests",
+        "Strategic decisions",
+        "Multi-phase investigations"
+      ]
+    },
+    "delegates_to": {
+      "flutter-build-agent": [
+        "After providing fix",
+        "When build/test needed"
+      ]
+    }
+  },
+  "escalations": {
+    "to_human": [
+      "Critical security vulnerabilities",
+      "Architectural changes affecting multiple features",
+      "Breaking schema changes",
+      "Unresolved complex bugs"
+    ]
+  },
+  "best_practices": {
+    "model_selection": {
+      "debug_codereview": "pro or grok4",
+      "security_review": "pro",
+      "planning": "pro",
+      "quick_tasks": "flash or grokfast",
+      "huge_context": "grok4fast"
+    },
+    "validation_levels": {
+      "external": "Use for thorough review with expert model",
+      "internal": "Use for quick validation"
+    }
+  },
+  "autonomy_level": "high",
+  "requires_approval": false,
+  "skill_reference": ".claude/skills/pal-master/skill.md"
+}
