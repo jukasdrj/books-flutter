@@ -110,7 +110,7 @@ Use the `/skill` command to invoke specialized agents:
 
 **Universal Agents (Synced from Backend):**
 - `/skill project-manager` - Orchestration and task delegation
-- `/skill zen-mcp-master` - Deep analysis using 14 Zen MCP tools
+- `/skill pal-master` - Deep analysis using PAL MCP tools (debug, codereview, thinkdeep, etc.)
 
 **Flutter-Specific Agents (TODO):**
 - `/skill flutter-agent` - Flutter build, test, and deployment (planned)
@@ -125,7 +125,7 @@ Use the `/skill` command to invoke specialized agents:
 ├── agents/                      # Agent configurations (JSON)
 │   ├── project-orchestrator.json
 │   ├── flutter-build-agent.json
-│   └── zen-analysis-agent.json
+│   └── pal-analysis-agent.json
 ├── hooks/                       # Git-like hooks
 │   ├── pre-commit.sh           # Pre-commit validation
 │   └── post-tool-use.sh        # Post-tool suggestions
@@ -136,14 +136,14 @@ Use the `/skill` command to invoke specialized agents:
 ├── skills/                      # Skill definitions
 │   ├── project-manager/
 │   ├── flutter-agent/
-│   └── zen-mcp-master/
-└── mcp_config.json             # MCP server configuration
+│   └── pal-master/
+└── tsc-cache/                  # TypeScript cache
 ```
 
 ### When to Use Agents
 
 - **Complex Workflows:** Use `/skill project-manager` for multi-step tasks
-- **Code Analysis/Review:** Use `/skill zen-mcp-master` for deep debugging
+- **Code Analysis/Review:** Use `/skill pal-master` for deep debugging
 - **Flutter Operations:** Use `/skill flutter-agent` for builds/tests (when implemented)
 
 ### GitHub Infrastructure
@@ -614,7 +614,7 @@ static final lightTheme = ThemeData(
 **Status:** Complete ✅
 
 1. ✅ Created `.claude/` directory structure
-2. ✅ Synced universal agents from backend (project-manager, zen-mcp-master)
+2. ✅ Synced universal agents from backend (project-manager, pal-master)
 3. ✅ Added hooks (pre-commit, post-tool-use)
 4. ✅ Created reusable prompts (plan-feature, debug-issue, code-review)
 5. ✅ Configured MCP server integration
@@ -648,7 +648,7 @@ static final lightTheme = ThemeData(
 **Current Agent Setup Assessment:**
 - **Status:** 85% optimized with excellent 3-agent architecture
 - **Configuration:** 4,000+ lines of comprehensive agent setup
-- **Architecture:** Production-ready project-orchestrator → flutter-agent + zen-mcp-master
+- **Architecture:** Production-ready project-orchestrator → flutter-agent + pal-master
 
 **Critical Optimization Opportunities Identified:**
 1. **Agent Memory & Learning System** (Missing - High Impact)
